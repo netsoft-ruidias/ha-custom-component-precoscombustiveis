@@ -1,0 +1,14 @@
+{
+    "version": "1.0.0",
+    "domain": "precoscombustiveis",
+    "name": "PrecosCombustiveis DGEG Integration",
+    "documentation": "https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/blob/main/README.md",
+    "issue_tracker": "https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/issues",
+    "iot_class": "cloud_polling",
+    "requirements": [],
+    "dependencies": [],
+    "codeowners": [
+        "@ruidias-netsoft"
+    ],
+    "config_flow": true
+}

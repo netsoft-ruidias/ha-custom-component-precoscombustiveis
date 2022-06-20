@@ -1,0 +1,7 @@
+{
+    "name": "Preços dos Combustíveis - DGEG",
+    "country": "PT",
+    "domain": "precoscombustiveis",
+    "render_readme": true,
+    "iot_class": "Cloud Polling"
+}
