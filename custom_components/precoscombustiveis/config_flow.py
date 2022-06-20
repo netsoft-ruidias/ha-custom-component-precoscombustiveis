@@ -29,9 +29,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         _LOGGER.debug("Starting async_step_user...")
         errors = {}
 
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-
         if user_input is not None:
             await self.async_set_unique_id(user_input["stationId"].lower())
             self._abort_if_unique_id_configured()
