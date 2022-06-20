@@ -61,7 +61,7 @@ class DGEG:
                     json = await res.json()
                     return Station(
                         id,
-                        json['data']['resultado'])
+                        json['resultado'])
                 raise Exception("Could not retrieve station details from API")
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
