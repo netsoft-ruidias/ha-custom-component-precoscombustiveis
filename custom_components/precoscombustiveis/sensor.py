@@ -66,7 +66,7 @@ class PrecosCombustiveisSensor(SensorEntity):
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
-        return f"{DOMAIN}-{self._stationId}"
+        return f"{DOMAIN}-{self._stationId}-{self._fuelName}".lower()
 
     @property
     def state(self) -> float:
