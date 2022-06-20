@@ -22,7 +22,7 @@ class Station:
 
     @property
     def name(self):
-        return self._data["nome"]
+        return self._data["Nome"]
 
     @property
     def brand(self):
