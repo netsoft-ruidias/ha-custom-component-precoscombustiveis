@@ -35,7 +35,7 @@ async def async_setup_entry(
     _LOGGER.debug("async_setup_entry", "config", config)
 
     station = await api.getStation(config["stationId"])
-    sensors = [PrecosCombustiveisSensor(api, config["stationId"], station, fuel.TipoCombustivel) for fuel in station.fuels]
+    sensors = [PrecosCombustiveisSensor(api, config["stationId"], station, fuel["TipoCombustivel"]) for fuel in station.fuels]
     async_add_entities(sensors)
 
 
