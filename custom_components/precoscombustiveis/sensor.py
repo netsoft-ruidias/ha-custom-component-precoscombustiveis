@@ -106,5 +106,5 @@ class PrecosCombustiveisSensor(SensorEntity):
         if (station):
             fuel = [f for f in self._station.fuels if f["TipoCombustivel"] == self._fuelName]
             if (fuel):
-                self._state = float(fuel["Preco"].replace(" €/litro", ""))
+                self._state = float(fuel[0]["Preco"].replace(" €/litro", ""))
             
