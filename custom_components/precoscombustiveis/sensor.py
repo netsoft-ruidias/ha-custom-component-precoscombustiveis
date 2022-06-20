@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+
 from .dgeg import Station, DGEG
 from .const import (
     DOMAIN,
@@ -21,6 +22,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
+
 
 async def async_setup_entry(
     hass: HomeAssistant, 
@@ -43,6 +45,7 @@ async def async_setup_entry(
 
 
 
+
 class PrecosCombustiveisSensor(SensorEntity):
     """Representation of a PrecosCombustiveis Sensor."""
 
@@ -57,6 +60,7 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._unit_of_measurement = UNIT_OF_MEASUREMENT
         self._device_class = SensorDeviceClass.MONETARY
         self._state_class = SensorStateClass.TOTAL
+
 
     @property
     def name(self) -> str:
@@ -89,6 +93,7 @@ class PrecosCombustiveisSensor(SensorEntity):
     def icon(self):
         return self._icon
 
+
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
@@ -98,6 +103,7 @@ class PrecosCombustiveisSensor(SensorEntity):
             "stationType": self._station.type,
             "lastUpdate": self._station.lastUpdate,
         }
+
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""
