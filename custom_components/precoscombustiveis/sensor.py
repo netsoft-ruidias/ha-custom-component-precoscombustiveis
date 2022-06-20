@@ -12,7 +12,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-
 from .dgeg import Station, DGEG
 from .const import (
     DOMAIN,
@@ -42,8 +41,6 @@ async def async_setup_entry(
 
     sensors = [PrecosCombustiveisSensor(api, config["stationId"], station, fuel["TipoCombustivel"]) for fuel in station.fuels]
     async_add_entities(sensors)
-
-
 
 
 class PrecosCombustiveisSensor(SensorEntity):
@@ -93,7 +90,6 @@ class PrecosCombustiveisSensor(SensorEntity):
     def icon(self):
         return self._icon
 
-
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
@@ -104,13 +100,12 @@ class PrecosCombustiveisSensor(SensorEntity):
             "lastUpdate": self._station.lastUpdate,
         }
 
-
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""
         api = self._api
         station = await api.getStation(self._stationId)
         if (station):
-            fuel = [f for f in self._station.fuels if f["TipoCombustivel"] == self._fuelName]
-            if (fuel):
-                self._state = float(fuel[0]["Preco"].replace(" €/litro", ""))
+            fuel = [f for f in self._station.fuels if f["TipoCombustivel"] == self._fuelName][0]
+            if (fuel):               
+                self._state = float(fuel["Preco"].replace(" €/litro", ""))
             
