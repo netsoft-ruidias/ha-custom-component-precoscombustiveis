@@ -40,6 +40,9 @@ class Station:
     def lastUpdate(self):
         return self._data["DataAtualizacao"]
 
+
+
+
 class DGEG:
     """Interfaces to https://precoscombustiveis.dgeg.gov.pt/"""
 
