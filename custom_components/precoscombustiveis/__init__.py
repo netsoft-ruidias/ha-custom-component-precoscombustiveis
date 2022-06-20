@@ -27,8 +27,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+    """Unload a config entry."""
+    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, "sensor")
 
-    return unload_ok    
+    if unload_ok:
+        for unsub in hass.data[DOMAIN].listeners:
+            unsub()
+        hass.data.pop(DOMAIN)
+
+        return True
+
+    return False
+
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload config entry."""
+    await async_unload_entry(hass, entry)
+    await async_setup_entry(hass, entry)

@@ -58,7 +58,7 @@ class PrecosCombustiveisSensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the entity."""
-        return f"{self._station.Marca} {self._station.Nome} {self._fuelName}"
+        return f"{self._station.brand} {self._station.name} {self._fuelName}"
 
     @property
     def unique_id(self) -> str:
