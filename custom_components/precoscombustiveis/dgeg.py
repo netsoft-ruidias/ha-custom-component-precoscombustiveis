@@ -59,6 +59,7 @@ class DGEG:
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
+                    _LOGGER.debug("Station details", json)
                     return Station(
                         id,
                         json['resultado'])
