@@ -4,17 +4,16 @@
         "step": {
             "user": {
                 "title": "Add Credentials (user)",
-                "description": "Some description (user)",
+                "description": "Please type the service station ID from which you want to obtain the prices.",
                 "data": {
-                    "stationId": "StationId"
+                    "stationId": "Station Id"
                 },
                 "data_description": {
-                    "stationId": "Identificador da Estação de Combustível"
+                    "stationId": "Station Id Identifier"
                 }
             }
         },
         "abort": {
-            "single_instance_allowed": "Only a single configuration of myEdenred is allowed.",
             "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
         }
     }

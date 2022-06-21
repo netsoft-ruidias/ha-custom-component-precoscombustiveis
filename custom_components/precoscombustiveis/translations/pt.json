@@ -1,0 +1,20 @@
+{
+    "title": "Preços dos Combustiveis - DGEG",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Estação de Serviço",
+                "description": "Deverá introduzir o ID da estação de serviço de onde pretende obter os preços.",
+                "data": {
+                    "stationId": "Id da Estação de Serviço"
+                },
+                "data_description": {
+                    "stationId": "Identificador da Estação de Serviço"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+        }
+    }
+}

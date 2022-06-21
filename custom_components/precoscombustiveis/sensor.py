@@ -1,23 +1,17 @@
 """Platform for sensor integration."""
 from __future__ import annotations
-from typing import Any, Dict
-import logging
 
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorEntity,
-    SensorStateClass,
-)
-from homeassistant.core import HomeAssistant
+import logging
+from typing import Any, Dict
+
+from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
+                                             SensorStateClass)
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .dgeg import Station, DGEG
-from .const import (
-    DOMAIN,
-    DEFAULT_ICON,
-    UNIT_OF_MEASUREMENT
-)
+from .const import DEFAULT_ICON, DOMAIN, UNIT_OF_MEASUREMENT
+from .dgeg import DGEG, Station
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
