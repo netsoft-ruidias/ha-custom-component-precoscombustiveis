@@ -1,14 +1,59 @@
-name: Validate with hassfest
+name: Linting
 
 on:
   push:
+    branches:
+      - main
+      - dev
   pull_request:
   schedule:
-    - cron:  '0 0 * * *'
+    - cron: "0 0 * * *"
+
+env:
+  DEFAULT_PYTHON: 3.9
 
 jobs:
-  validate:
+  pre-commit:
     runs-on: "ubuntu-latest"
+    name: Pre-commit
     steps:
-        - uses: "actions/checkout@v2"
-        - uses: "home-assistant/actions/hassfest@master"
+      - name: Check out the repository
+        uses: actions/checkout@v3.0.2
+
+      - name: Set up Python ${{ env.DEFAULT_PYTHON }}
+        uses: actions/setup-python@v4.0.0
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=.github/workflows/constraints.txt pip
+          pip --version
+      - name: Install Python modules
+        run: |
+          pip install --constraint=.github/workflows/constraints.txt pre-commit black flake8 reorder-python-imports
+      - name: Run pre-commit on all files
+        run: |
+          pre-commit run --all-files --show-diff-on-failure --color=always
+  
+  hacs:
+    runs-on: "ubuntu-latest"
+    name: HACS
+    steps:
+      - name: Check out the repository
+        uses: "actions/checkout@v3.0.2"
+
+      - name: HACS validation
+        uses: "hacs/action@22.5.0"
+        with:
+          category: "integration"
+
+  hassfest:
+    runs-on: "ubuntu-latest"
+    name: Hassfest
+    steps:
+      - name: Check out the repository
+        uses: "actions/checkout@v3.0.2"
+
+      - name: Hassfest validation
+        uses: "home-assistant/actions/hassfest@master"
