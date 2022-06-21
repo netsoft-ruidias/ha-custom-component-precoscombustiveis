@@ -1,9 +1,9 @@
-[![GitHub Release][releases-shield]][releases]
-[![License][license-shield]](LICENSE.md)
+![GitHub](https://img.shields.io/github/license/netsoft-ruidias/ha-custom-component-precoscombustiveis?style=for-the-badge)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-![Project Maintenance][maintenance-shield]
-[![GitHub Activity][commits-shield]][commits]
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/netsoft-ruidias/ha-custom-component-precoscombustiveis?style=for-the-badge)
+![GitHub Release Date](https://img.shields.io/github/release-date/netsoft-ruidias/ha-custom-component-precoscombustiveis?style=for-the-badge)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/netsoft-ruidias/ha-custom-component-precoscombustiveis?style=for-the-badge)
 
 # Preços dos Combustíveis - DGEG
 Fuel Prices in Portugal - Custom Component for Home Assistant
