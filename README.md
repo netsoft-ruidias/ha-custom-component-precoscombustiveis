@@ -27,7 +27,13 @@ Assuming you have already installed and configured HACS, follow these steps:
 Please note that you need to also manually update the component with newer versions in the future.
 
 # Configuration
-(comming soon)
+
+## Through the interface
+1. Navigate to `Settings > Devices & Services` and then click `Add Integration`
+2. Search for `Precos Combustiveis DGEG.PT integration`
+3. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired post and copy the `Id`)
+4. Enter the StationId 
+5. Repeat the procedure as many times as desired to include other stations
 
 # Legal notice
 All product names, trademarks and registered trademarks in (the images in) this repository, are property of their respective owners. All images in this repository are used by the project for identification purposes only.
