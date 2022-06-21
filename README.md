@@ -20,11 +20,7 @@ Assuming you have already installed and configured HACS, follow these steps:
 9. Ready! Now continue with the configuration.
 
 ## Manual
-1. Copy directory brandstofprijzen to your <config dir>/custom_components directory.
-2. Configure Home Assistant.
-3. Restart Home Assistant.
-
-Please note that you need to also manually update the component with newer versions in the future.
+(not recomended)
 
 # Configuration
 
