@@ -15,7 +15,7 @@
         },
         "abort": {
             "single_instance_allowed": "Only a single configuration of myEdenred is allowed.",
-            "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+            "already_configured": "Integration is already configured"
         }
     }
 }
