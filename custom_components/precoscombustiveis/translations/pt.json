@@ -4,7 +4,7 @@
         "step": {
             "user": {
                 "title": "Estação de Serviço",
-                "description": "Deverá introduzir o ID da estação de serviço de onde pretende obter os preços.",
+                "description": "Deverá introduzir o ID da estação de serviço de onde pretende obter os preços dos combustíveis. (Ir a [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), pesquisar o posto pretendido e copiar o `Id`)",
                 "data": {
                     "stationId": "Id da Estação de Serviço"
                 },
