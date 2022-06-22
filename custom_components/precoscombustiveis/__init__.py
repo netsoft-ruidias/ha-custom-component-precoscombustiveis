@@ -26,6 +26,8 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
     session = async_get_clientsession(hass, True)
     api = DGEG(session)
 
+    _LOGGER.debug("Save API in hass.data[DOMAIN]")
+
     hass.data[DOMAIN] = {"api": api}
     return True
 
@@ -36,22 +38,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    unload_ok = await hass.config_entries.async_forward_entry_unload(
-        entry, DOMAIN)
+# async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+#     """Unload a config entry."""
+#     unload_ok = await hass.config_entries.async_forward_entry_unload(
+#         entry, DOMAIN)
 
-    if unload_ok:
-        for unsub in hass.data[DOMAIN].listeners:
-            unsub()
-        hass.data.pop(DOMAIN)
+#     if unload_ok:
+#         for unsub in hass.data[DOMAIN].listeners:
+#             unsub()
+#         hass.data.pop(DOMAIN)
 
-        return True
+#         return True
 
-    return False
+#     return False
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
-    await async_unload_entry(hass, entry)
+    # await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)

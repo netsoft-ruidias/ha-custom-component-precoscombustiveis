@@ -47,7 +47,6 @@ class DGEG:
 
     def __init__(self, websession):
         self.websession = websession
-        self.json = None
 
     async def getStation(self, id: str) -> Station:
         """Issue STATION requests."""
