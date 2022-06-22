@@ -36,7 +36,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(user_input[FIELD_ID].lower())
             self._abort_if_unique_id_configured()
 
-            if self._test_gas_station(user_input[FIELD_ID]):
+            if await self._test_gas_station(user_input[FIELD_ID]):
                 _LOGGER.debug("Config is valid!")
                 return self.async_create_entry(
                     title="DGEG " + user_input[FIELD_ID], 
