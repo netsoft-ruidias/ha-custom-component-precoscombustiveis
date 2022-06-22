@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict
 
 from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
                                              SensorStateClass)
@@ -17,10 +16,9 @@ _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
 
-async def async_setup_entry(
-    hass: HomeAssistant, 
-    config_entry: ConfigEntry, 
-    async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, 
+                            config_entry: ConfigEntry, 
+                            async_add_entities):
     """Setup sensor platform."""
     session = async_get_clientsession(hass, True)
     api = DGEG(session)   
@@ -51,7 +49,6 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._unit_of_measurement = UNIT_OF_MEASUREMENT
         self._device_class = SensorDeviceClass.MONETARY
         self._state_class = SensorStateClass.TOTAL
-
 
     @property
     def name(self) -> str:
@@ -102,4 +99,3 @@ class PrecosCombustiveisSensor(SensorEntity):
             fuel = [f for f in self._station.fuels if f["TipoCombustivel"] == self._fuelName][0]
             if (fuel):               
                 self._state = float(fuel["Preco"].replace(" €/litro", "").replace(",", "."))
-            

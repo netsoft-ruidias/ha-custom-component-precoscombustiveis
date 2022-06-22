@@ -9,6 +9,7 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
+
 class Station:
     """Represents a STATION card."""
 
@@ -43,6 +44,7 @@ class Station:
 
 
 
+
 class DGEG:
     """Interfaces to https://precoscombustiveis.dgeg.gov.pt/"""
 
@@ -56,7 +58,7 @@ class DGEG:
             _LOGGER.debug("Fetching station details...")
             async with self.websession.get(
                 API_URI_TEMPLATE.format(id), 
-                headers = { 
+                headers={ 
                     "Content-Type": "application/json" 
                 }
             ) as res:

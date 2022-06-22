@@ -14,9 +14,11 @@ _LOGGER.setLevel(logging.DEBUG)
 
 PLATFORMS: list[str] = ["sensor"]
 
+
 async def async_setup(hass: HomeAssistant, config: ConfigType):
     _LOGGER.debug("async_setup")
     return True
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up the component from a config entry."""
@@ -25,10 +27,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     return True
 
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
     """Unload a config entry."""
-    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, "sensor")
+    unload_ok = await hass.config_entries.async_forward_entry_unload(
+        entry, 
+        "sensor"
+    )
 
     if unload_ok:
         for unsub in hass.data[DOMAIN].listeners:
@@ -38,6 +44,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
         return True
 
     return False
+
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""

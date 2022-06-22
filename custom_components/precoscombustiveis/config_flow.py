@@ -5,7 +5,6 @@ import logging
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import DOMAIN
 
@@ -17,6 +16,7 @@ DATA_SCHEMA = vol.Schema(
         vol.Required("stationId"): str
     }
 )
+
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """PrecosCombustiveis config flow."""
@@ -36,7 +36,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             _LOGGER.debug("Config is valid!")
             return self.async_create_entry(
                 title="DGEG " + user_input["stationId"], 
-                data = user_input
+                data=user_input
             ) 
 
         return self.async_show_form(
