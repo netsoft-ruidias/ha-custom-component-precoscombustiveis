@@ -36,8 +36,8 @@ Manual instalation is not recomended
 ## Through the interface
 1. Navigate to `Settings > Devices & Services` and then click `Add Integration`
 2. Search for `Precos Combustiveis DGEG.PT integration`
-3. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired gas station and copy the `Id`)
-4. Enter the StationId 
+3. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired gas station and copy it's `Id`)
+4. Enter the StationId you copied in the previous step
 5. Repeat the procedure as many times as desired to include other stations
 
 ## Through configuration.yaml
