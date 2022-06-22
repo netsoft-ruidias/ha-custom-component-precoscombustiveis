@@ -70,7 +70,7 @@ class DGEG:
 
     async def testStation(self, id: str) -> bool:
         """Test if stationId exists."""
-        station = self.getStation(id)
+        station = await self.getStation(id)
         _LOGGER.debug("station.name %s", station.name)
         _LOGGER.debug("station.name %s", station.fuels)
         _LOGGER.debug("result %s", (not station.name and not station.fuels))
