@@ -2,13 +2,15 @@
 from __future__ import annotations
 import logging
 
-from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
+from .dgeg import DGEG
 from .const import DOMAIN
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
@@ -16,25 +18,28 @@ PLATFORMS: list[str] = ["sensor"]
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType):
-    _LOGGER.debug("async_setup")
+    """Start configuring the API."""
+    _LOGGER.debug("Start 'async_setup'...")
+    
+    hass.data.setdefault(DOMAIN, {})
+
+    session = async_get_clientsession(hass, True)
+    api = DGEG(session)
+
+    hass.data[DOMAIN] = {"api": api}
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up the component from a config entry."""
-    hass.data.setdefault(DOMAIN, {})
-
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
-    """Unload a config entry."""
     unload_ok = await hass.config_entries.async_forward_entry_unload(
-        entry, 
-        "sensor"
-    )
+        entry, DOMAIN)
 
     if unload_ok:
         for unsub in hass.data[DOMAIN].listeners:
