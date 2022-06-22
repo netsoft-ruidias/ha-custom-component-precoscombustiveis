@@ -2,6 +2,8 @@ DOMAIN = "precoscombustiveis"
 PLATFORM = "sensor"
 DOMAIN_DATA = f"{DOMAIN}_data"
 
+FIELD_ID = "stationId"
+
 DEFAULT_ICON = "mdi:gas-station"
 UNIT_OF_MEASUREMENT = "€"
 

@@ -13,6 +13,9 @@
                 }
             }
         },
+        "error": {
+            "invalid_station": "Invalid StationId or gas station not found."
+        },
         "abort": {
             "already_configured": "Integration is already configured"
         }
