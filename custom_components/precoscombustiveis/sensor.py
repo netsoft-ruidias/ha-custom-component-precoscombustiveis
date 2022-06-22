@@ -39,6 +39,7 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._stationId = stationId
         self._station = station
         self._fuelName = fuelName
+        self._state = 0
         self._icon = DEFAULT_ICON
         self._unit_of_measurement = UNIT_OF_MEASUREMENT
         self._device_class = SensorDeviceClass.MONETARY
