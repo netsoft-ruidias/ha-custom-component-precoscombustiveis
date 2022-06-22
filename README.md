@@ -25,16 +25,60 @@ Assuming you have already installed and configured HACS, follow these steps:
 9. Ready! Now continue with the configuration.
 
 ## Manual
-(not recomended)
+Manual instalation is not recomended
 
 # Configuration
 
 ## Through the interface
 1. Navigate to `Settings > Devices & Services` and then click `Add Integration`
 2. Search for `Precos Combustiveis DGEG.PT integration`
-3. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired post and copy the `Id`)
+3. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired gas station and copy the `Id`)
 4. Enter the StationId 
 5. Repeat the procedure as many times as desired to include other stations
+
+## Through configuration.yaml
+Manual configuration through configuration.yaml is not recomended, please use the interface configuration as described above
+
+## Sample
+We can use a standard "entities" card to display the data
+
+```yaml
+type: entities
+entities:
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasoleo_simples_2
+    name: Gasóleo simples
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasoleo_especial
+    name: Gasóleo especial
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasoleo_colorido
+    name: Gasóleo colorido
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_especial_95
+    name: Gasolina especial 95
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasoleo_simples
+    name: Gasolina especial 98
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
+    name: Gasolina simples 95
+  - type: divider
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
+    type: attribute
+    attribute: Name
+    name: Nome
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
+    type: attribute
+    attribute: brand
+    name: Marca
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
+    type: attribute
+    attribute: type
+    name: Tipo de Posto
+  - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
+    type: attribute
+    attribute: lastUpdate
+    name: Ultima Actualização de Preço
+title: GALP Irmãos Peres, Lda
+```
+which will result in the following card:
+![Sample Card](https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/blob/main/docs/samplecard.png?raw=true)
+
 
 # Legal notice
 All product names, trademarks and registered trademarks in (the images in) this repository, are property of their respective owners. All images in this repository are used by the project for identification purposes only.
