@@ -13,6 +13,9 @@
                 }
             }
         },
+        "error": {
+            "invalid_station": "Id inválido, estação de serviço não existe."
+        },
         "abort": {
             "already_configured": "Esta integração já existe!"
         }

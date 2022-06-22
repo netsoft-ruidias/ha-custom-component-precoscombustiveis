@@ -42,9 +42,6 @@ class Station:
         return self._data["DataAtualizacao"]
 
 
-
-
-
 class DGEG:
     """Interfaces to https://precoscombustiveis.dgeg.gov.pt/"""
 
@@ -72,4 +69,7 @@ class DGEG:
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
 
-
+    async def testStation(self, id: str) -> bool:
+        """Test if stationId exists."""
+        station = self.getStation(id)
+        return not (not station.name and not station.fuels)

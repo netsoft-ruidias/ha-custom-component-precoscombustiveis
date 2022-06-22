@@ -21,15 +21,10 @@ async def async_setup_entry(hass: HomeAssistant,
                             async_add_entities):
     """Setup sensor platform."""
     session = async_get_clientsession(hass, True)
-    api = DGEG(session)   
+    api = DGEG(session)
 
     config = config_entry.data
-
-    _LOGGER.debug("async_setup_entry", "config", config)
-
     station = await api.getStation(config["stationId"])
-
-    _LOGGER.debug("async_setup_entry", "station", station)
 
     sensors = [PrecosCombustiveisSensor(api, config["stationId"], station, fuel["TipoCombustivel"]) for fuel in station.fuels]
     async_add_entities(sensors)
@@ -44,7 +39,6 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._stationId = stationId
         self._station = station
         self._fuelName = fuelName
-        self._state = 0
         self._icon = DEFAULT_ICON
         self._unit_of_measurement = UNIT_OF_MEASUREMENT
         self._device_class = SensorDeviceClass.MONETARY
