@@ -8,6 +8,10 @@
 # Preços dos Combustíveis - DGEG
 Fuel Prices in Portugal - Custom Component for Home Assistant
 
+The data source for this integration is the [DGEG - Direcção-Geral de Energia e Geologia](https://www.dgeg.gov.pt/).
+
+The author of this project categorically rejects any and all responsibility for the fuels prices that were presented by the integration.
+
 # Installation
 ## HACS (Recommended)
 This integration can be added to HACS as a custom (non-default) repository.
@@ -40,7 +44,7 @@ Manual instalation is not recomended
 Manual configuration through configuration.yaml is not recomended, please use the interface configuration as described above
 
 ## Sample
-We can use a standard "entities" card to display the data
+We can use a standard "entities" card to display the data in the UI:
 
 ```yaml
 type: entities
@@ -76,9 +80,12 @@ entities:
     name: Ultima Actualização de Preço
 title: GALP Irmãos Peres, Lda
 ```
-which will result in the following card:
+Which will result in the following card:
+
 ![Sample Card](https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/blob/main/docs/samplecard.png?raw=true)
 
 
 # Legal notice
+This is a personal project and isn't in any affiliated with, sponsored or endorsed by [DGEG](https://www.dgeg.gov.pt/).
+
 All product names, trademarks and registered trademarks in (the images in) this repository, are property of their respective owners. All images in this repository are used by the project for identification purposes only.
