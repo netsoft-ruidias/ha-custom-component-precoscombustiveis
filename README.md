@@ -41,10 +41,10 @@ Manual instalation is not recomended
 5. Repeat the procedure as many times as desired to include other stations
 
 ## Through configuration.yaml
-Manual configuration through configuration.yaml is not recomended, please use the interface configuration as described above
+Manual configuration through _configuration.yaml_ is not recomended, please use the interface configuration as described above
 
 ## Sample
-We can use a standard "entities" card to display the data in the UI:
+One can use the standard [entities](https://www.home-assistant.io/dashboards/entities/) card to display data in the UI:
 
 ```yaml
 type: entities
