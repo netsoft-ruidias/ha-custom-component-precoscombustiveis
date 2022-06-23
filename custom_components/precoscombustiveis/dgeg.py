@@ -60,7 +60,7 @@ class DGEG:
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
-                    _LOGGER.debug("Station details %s", json)
+                    #_LOGGER.debug("Station details %s", json)
                     return Station(
                         id,
                         json['resultado'])
@@ -71,7 +71,4 @@ class DGEG:
     async def testStation(self, id: str) -> bool:
         """Test if stationId exists."""
         station = await self.getStation(id)
-        _LOGGER.debug("station.name %s", station.name)
-        _LOGGER.debug("station.name %s", station.fuels)
-        _LOGGER.debug("result %s", (not station.name and not station.fuels))
         return not (not station.name and not station.fuels)
