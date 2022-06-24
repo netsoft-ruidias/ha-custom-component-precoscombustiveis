@@ -76,7 +76,7 @@ entities:
     name: Tipo de Posto
   - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
     type: attribute
-    attribute: lastUpdate
+    attribute: lastPriceUpdate
     name: Ultima Actualização de Preço
 title: GALP Irmãos Peres, Lda
 ```
