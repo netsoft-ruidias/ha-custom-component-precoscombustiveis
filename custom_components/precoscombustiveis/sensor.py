@@ -13,7 +13,12 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DEFAULT_ICON, DOMAIN, UNIT_OF_MEASUREMENT, ATTRIBUTION
+from .const import (
+    DEFAULT_ICON, 
+    DOMAIN, 
+    UNIT_OF_MEASUREMENT, 
+    ATTRIBUTION, 
+    CONF_STATIONID)
 from .dgeg import DGEG, Station
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,9 +35,14 @@ async def async_setup_entry(hass: HomeAssistant,
     api = DGEG(session)
 
     config = config_entry.data
-    station = await api.getStation(config["stationId"])
+    station = await api.getStation(config[CONF_STATIONID])
     
-    sensors = [PrecosCombustiveisSensor(api, config["stationId"], station, fuel["TipoCombustivel"]) for fuel in station.fuels]
+    sensors = [PrecosCombustiveisSensor(
+        api, 
+        config[CONF_STATIONID], 
+        station, 
+        fuel["TipoCombustivel"]
+    ) for fuel in station.fuels]
     async_add_entities(sensors, update_before_add=True)
 
 

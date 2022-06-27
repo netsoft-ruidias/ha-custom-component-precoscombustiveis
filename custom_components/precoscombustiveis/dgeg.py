@@ -34,6 +34,10 @@ class Station:
         return self._data["TipoPosto"]
 
     @property
+    def address(self):
+        return self._data["Morada"]["Localidade"]
+
+    @property
     def fuels(self):
         return self._data["Combustiveis"]
 
@@ -60,7 +64,7 @@ class DGEG:
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
-                    #_LOGGER.debug("Station details %s", json)
+                    # _LOGGER.debug("Station details %s", json)
                     return Station(
                         id,
                         json['resultado'])
@@ -68,7 +72,11 @@ class DGEG:
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
 
-    async def testStation(self, id: str) -> bool:
+    async def testStation(self, id: str) -> str:
         """Test if stationId exists."""
         station = await self.getStation(id)
-        return not (not station.name and not station.fuels)
+        if (not (not station.name and not station.fuels)):
+            return station.name
+        else:
+            return None
+        #return not (not station.name and not station.fuels)

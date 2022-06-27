@@ -9,14 +9,14 @@ from homeassistant import config_entries
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .dgeg import DGEG
-from .const import DOMAIN, FIELD_ID
+from .const import DOMAIN, CONF_STATIONID
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
 DATA_SCHEMA = vol.Schema(
     { 
-        vol.Required(FIELD_ID): str
+        vol.Required(CONF_STATIONID): str
     }
 )
 
@@ -33,13 +33,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            await self.async_set_unique_id(user_input[FIELD_ID].lower())
+            await self.async_set_unique_id(user_input[CONF_STATIONID].lower())
             self._abort_if_unique_id_configured()
 
-            if await self._test_gas_station(user_input[FIELD_ID]):
+            stationName = await self._test_gas_station(user_input[CONF_STATIONID])
+            if stationName:
                 _LOGGER.debug("Config is valid!")
                 return self.async_create_entry(
-                    title="DGEG " + user_input[FIELD_ID], 
+                    title=f"{user_input[CONF_STATIONID]}: {stationName}",
                     data=user_input
                 ) 
             else:
