@@ -65,24 +65,43 @@ entities:
   - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
     type: attribute
     attribute: Name
-    name: Nome
+    name: Empresa
+    icon: mdi:greenhouse
   - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
     type: attribute
-    attribute: brand
+    attribute: Brand
     name: Marca
+    icon: mdi:widgets
   - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
     type: attribute
-    attribute: type
+    attribute: stationType
     name: Tipo de Posto
   - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
     type: attribute
     attribute: lastPriceUpdate
     name: Ultima Actualização de Preço
+    icon: mdi:reload
 title: GALP Irmãos Peres, Lda
 ```
 Which will result in the following card:
 
 ![Sample Card](https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/blob/main/docs/samplecard.png?raw=true)
+
+Or, if you prefer, you can even use a [custom:auto-entities](https://github.com/thomasloven/lovelace-auto-entities) card to auto display your prices:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Diesel Prices
+filter:
+  include:
+    - entity_id: /sensor\..*_gasoleo/
+sort:
+  method: state
+  numeric: true
+  reverse: false
+```
 
 
 # Legal notice
