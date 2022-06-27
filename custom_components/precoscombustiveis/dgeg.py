@@ -35,7 +35,11 @@ class Station:
 
     @property
     def address(self):
-        return self._data["Morada"]["Localidade"]
+        return [
+            self._data["Morada"]["Morada"],
+            self._data["Morada"]["Localidade"],
+            self._data["Morada"]["CodPostal"]
+        ]
 
     @property
     def fuels(self):
