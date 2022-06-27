@@ -13,7 +13,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DEFAULT_ICON, DOMAIN, UNIT_OF_MEASUREMENT
+from .const import DEFAULT_ICON, DOMAIN, UNIT_OF_MEASUREMENT, ATTRIBUTION
 from .dgeg import DGEG, Station
 
 _LOGGER = logging.getLogger(__name__)
@@ -88,6 +88,10 @@ class PrecosCombustiveisSensor(SensorEntity):
     @property
     def icon(self):
         return self._icon
+
+    @property
+    def attribution(self):
+        return ATTRIBUTION
 
     @property
     def extra_state_attributes(self) -> Dict[str, Any]:
