@@ -107,8 +107,9 @@ class PrecosCombustiveisSensor(SensorEntity):
     def extra_state_attributes(self) -> Dict[str, Any]:
         """Return the state attributes."""
         return {
-            "brand": self._station.brand,
+            "Brand": self._station.brand,
             "Name": self._station.name,
+            "Address": self._station.address,
             "stationType": self._station.type,
             "lastPriceUpdate": self._station.lastUpdate,
         }
