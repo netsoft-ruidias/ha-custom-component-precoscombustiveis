@@ -1,6 +1,7 @@
 import asyncio
 import aiohttp
 
+from datetime import datetime
 from custom_components.precoscombustiveis.dgeg import DGEG, Station
 
 async def main():
@@ -15,10 +16,17 @@ async def main():
 
         station = await api.getStation(stationId)
         if (station):
-            print ("Station Id......:", station.id)
-            print ("Station Name....:", station.name)
-            print ("Station Brand...:", station.brand)
-            print ("Station Address.:", station.address)
-            print ("Station Type....:", station.type)
+            print ("Station Id.......:", station.id)
+            print ("Station Name.....:", station.name)
+            print ("Station Brand....:", station.brand)
+            print ("Station Address..:", station.address)
+            print ("Station Type.....:", station.type)
+            print ("Last Update......:", station.lastUpdate)
+            print (station.fuels)
+            print ("Gasóleo simples..:", station.getPrice("Gasóleo simples"))
+            print ("Gasóleo especial.:", station.getPrice("Gasóleo especial"))
+        else:
+            print ("Gas Station not found!")
+
 
 asyncio.get_event_loop().run_until_complete(main())

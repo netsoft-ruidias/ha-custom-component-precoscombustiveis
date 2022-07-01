@@ -29,7 +29,7 @@ Assuming you have already installed and configured HACS, follow these steps:
 9. Ready! Now continue with the configuration.
 
 ## Manual
-Manual instalation is not recomended
+Manual installation is not recomended
 
 # Configuration
 

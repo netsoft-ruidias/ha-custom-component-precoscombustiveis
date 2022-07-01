@@ -5,13 +5,14 @@ import aiohttp
 import logging
 
 from datetime import timedelta
-from typing import Any, Callable, Dict
+from typing import Any, Dict
 
 from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
                                              SensorStateClass)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     DEFAULT_ICON, 
@@ -29,7 +30,7 @@ SCAN_INTERVAL = timedelta(minutes=60)
 
 async def async_setup_entry(hass: HomeAssistant, 
                             config_entry: ConfigEntry, 
-                            async_add_entities: Callable):
+                            async_add_entities: AddEntitiesCallback):
     """Setup sensor platform."""
     session = async_get_clientsession(hass, True)
     api = DGEG(session)
@@ -107,22 +108,21 @@ class PrecosCombustiveisSensor(SensorEntity):
     def extra_state_attributes(self) -> Dict[str, Any]:
         """Return the state attributes."""
         return {
+            "GasStationId": self._stationId,
             "Brand": self._station.brand,
             "Name": self._station.name,
             "Address": self._station.address,
-            "stationType": self._station.type,
-            "lastPriceUpdate": self._station.lastUpdate,
+            "StationType": self._station.type,
+            "LastPriceUpdate": self._station.lastUpdate,
         }
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""
         try:
             api = self._api
-            station = await api.getStation(self._stationId)
-            if (station):
-                fuel = [f for f in self._station.fuels if f["TipoCombustivel"] == self._fuelName][0]
-                if (fuel):               
-                    self._state = float(fuel["Preco"].replace(" €/litro", "").replace(",", "."))
+            gasStation = await api.getStation(self._stationId)
+            if (gasStation):
+                self._state = gasStation.getPrice(self._fuelName)
         except aiohttp.ClientError as err:
             self._available = False
             _LOGGER.exception("Error updating data from DGEG API. %s", err)

@@ -2,6 +2,8 @@
 import aiohttp
 import logging
 
+from datetime import datetime
+
 from .const import (
     API_URI_TEMPLATE
 )
@@ -35,19 +37,33 @@ class Station:
 
     @property
     def address(self):
-        return [
-            self._data["Morada"]["Morada"],
-            self._data["Morada"]["Localidade"],
-            self._data["Morada"]["CodPostal"]
-        ]
-
+        if self._data["Morada"]:
+            return [
+                self._data["Morada"]["Morada"],
+                self._data["Morada"]["Localidade"],
+                self._data["Morada"]["CodPostal"]
+            ]
+        else:
+            return None
+            
     @property
     def fuels(self):
         return self._data["Combustiveis"]
 
     @property
-    def lastUpdate(self):
-        return self._data["DataAtualizacao"]
+    def lastUpdate(self) -> datetime:
+        return datetime.strptime(
+            self._data["DataAtualizacao"],
+            '%d-%m-%Y %H:%M') 
+
+    def getPrice(self, fuelType) -> float:
+        fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuelType][0]
+        if (fuel):               
+            return float(fuel["Preco"]
+                .replace(" €/litro", "")
+                .replace(",", "."))
+        else:
+            return 0
 
 
 class DGEG:
@@ -68,7 +84,6 @@ class DGEG:
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
-                    # _LOGGER.debug("Station details %s", json)
                     return Station(
                         id,
                         json['resultado'])
