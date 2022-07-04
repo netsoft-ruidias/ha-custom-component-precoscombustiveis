@@ -73,9 +73,9 @@ class DGEG:
         self.websession = websession
 
     async def getStation(self, id: str) -> Station:
-        """Issue STATION requests."""
+        """Issue GAS STATION requests."""
         try:
-            _LOGGER.debug("Fetching station details...")
+            _LOGGER.debug(f"Fetching details for gas station Id:{id}...")
             async with self.websession.get(
                 API_URI_TEMPLATE.format(id), 
                 headers={ 
@@ -87,12 +87,12 @@ class DGEG:
                     return Station(
                         id,
                         json['resultado'])
-                raise Exception("Could not retrieve station details from API")
+                raise Exception("Could not retrieve gas station details from API")
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
 
     async def testStation(self, id: str) -> str:
-        """Test if stationId exists."""
+        """Test if gas stationId exists."""
         station = await self.getStation(id)
         if (not (not station.name and not station.fuels)):
             return station.name

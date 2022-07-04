@@ -14,19 +14,14 @@ The author of this project categorically rejects any and all responsibility for 
 
 # Installation
 ## HACS (Recommended)
-This integration can be added to HACS as a custom (non-default) repository.
+This is an official HACS integration and can be added via HACS.
 
 Assuming you have already installed and configured HACS, follow these steps:
 
 1. Navigate to the HACS integrations page at http://<your-home-assistant>:8123/hacs/integrations.
-2. Click the 3 vertical dots menu in the top right corner.
-3. Choose 'Custom repositories'
-4. Enter the name of this repository (https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/) in the text field in the dialog.
-5. Choose 'Integration' from the Category list in the dialog.
-6. Click 'Add'. The repository will now be added to your HACS.
-7. Click the 'x' to close the dialog.
-8. The integration is now visible. Click 'Install', and click 'Install' again.
-9. Ready! Now continue with the configuration.
+2. Search for `DGEG - Preços dos Combustíveis` under `Integrations` in the HACS Store tab.
+3. Click `Download this Repository with HACS`
+4. Your done! Now continue with the configuration.
 
 ## Manual
 Manual installation is not recomended
@@ -35,7 +30,7 @@ Manual installation is not recomended
 
 ## Through the interface
 1. Navigate to `Settings > Devices & Services` and then click `Add Integration`
-2. Search for `Precos Combustiveis DGEG.PT integration`
+2. Search for `Precos Combustiveis`
 3. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired gas station and copy it's `Id`)
 4. Enter the StationId you copied in the previous step
 5. Repeat the procedure as many times as desired to include other stations
