@@ -69,11 +69,11 @@ entities:
     icon: mdi:widgets
   - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
     type: attribute
-    attribute: stationType
+    attribute: StationType
     name: Tipo de Posto
   - entity: sensor.galp_irmaos_peres_lda_souto_gasolina_simples_95
     type: attribute
-    attribute: lastPriceUpdate
+    attribute: LastPriceUpdate
     name: Ultima Actualização de Preço
     icon: mdi:reload
 title: GALP Irmãos Peres, Lda
