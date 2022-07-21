@@ -8,7 +8,7 @@
     "requirements": [],
     "dependencies": [],
     "codeowners": [
-        "@ruidias-netsoft"
+        "@netsoft-ruidias"
     ],
     "config_flow": true
 }
