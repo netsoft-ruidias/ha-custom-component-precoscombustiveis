@@ -3,7 +3,7 @@
     "config": {
         "step": {
             "user": {
-                "title": "Add Credentials (user)",
+                "title": "Add Gas Station",
                 "description": "Please type the service station ID from which you want to obtain the prices. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired station and copy the `Id`)",
                 "data": {
                     "stationId": "Station Id"
