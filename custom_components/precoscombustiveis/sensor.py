@@ -60,7 +60,7 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._icon = DEFAULT_ICON
         self._unit_of_measurement = UNIT_OF_MEASUREMENT
         self._device_class = SensorDeviceClass.MONETARY
-        self._state_class = SensorStateClass.TOTAL
+        self._state_class = SensorStateClass.MEASUREMENT
         self._state = None
         self._available = True
 
