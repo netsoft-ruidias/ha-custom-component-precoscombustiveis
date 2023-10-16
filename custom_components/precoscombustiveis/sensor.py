@@ -112,9 +112,11 @@ class PrecosCombustiveisSensor(SensorEntity):
             "Brand": self._station.brand,
             "Name": self._station.name,
             "Address": self._station.address,
+            "Latitude": self._station.latitude,
+            "Longitude": self._station.longitude,
             "StationType": self._station.type,
-            "LastPriceUpdate": self._station.lastUpdate,
-        }
+            "LastPriceUpdate": station.getLastUpdate(self._fuelName),
+        } 
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""
