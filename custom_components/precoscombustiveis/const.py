@@ -7,6 +7,6 @@ ATTRIBUTION = "Data provided by https://precoscombustiveis.dgeg.gov.pt/"
 DEFAULT_ICON = "mdi:gas-station"
 UNIT_OF_MEASUREMENT = "€"
 
-API_URI_TEMPLATE = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/GetDadosPostoMapa?id={}"
+API_URI_TEMPLATE = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/GetDadosPosto?id={}"
 
 CONF_STATIONID = "stationId"

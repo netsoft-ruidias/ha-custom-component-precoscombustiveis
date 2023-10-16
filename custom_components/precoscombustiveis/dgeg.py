@@ -45,16 +45,26 @@ class Station:
             ]
         else:
             return None
-            
+
+    @property
+    def latitude(self) -> float:
+        return float(self._data["Morada"]["Latitude"])
+    
+    @property
+    def longitude(self) -> float:
+        return float(self._data["Morada"]["Longitude"])
+
     @property
     def fuels(self):
         return self._data["Combustiveis"]
 
-    @property
-    def lastUpdate(self) -> datetime:
-        return datetime.strptime(
-            self._data["DataAtualizacao"],
-            '%d-%m-%Y %H:%M') 
+    def getLastUpdate(self, fuelType) -> datetime:
+        fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuelType][0]
+        if (fuel):
+            return datetime.strptime(
+                fuel["DataAtualizacao"],
+                '%Y-%m-%d %H:%M')
+        return None
 
     def getPrice(self, fuelType) -> float:
         fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuelType][0]
@@ -64,7 +74,6 @@ class Station:
                 .replace(",", "."))
         else:
             return 0
-
 
 class DGEG:
     """Interfaces to https://precoscombustiveis.dgeg.gov.pt/"""

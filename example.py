@@ -12,7 +12,7 @@ async def main():
         print("Please type the service station ID from which you want to obtain the prices.")
         print("Go to https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos,")
         print("search for the desired station and copy the `Id`.")
-        stationId = input("Enter the Gas Station Id..: ")
+        stationId = input("Enter the Gas Station Id..: ") or "65167"
 
         station = await api.getStation(stationId)
         if (station):
@@ -20,11 +20,11 @@ async def main():
             print ("Station Name.....:", station.name)
             print ("Station Brand....:", station.brand)
             print ("Station Address..:", station.address)
+            print ("GPS..............:", station.latitude, station.longitude)
             print ("Station Type.....:", station.type)
-            print ("Last Update......:", station.lastUpdate)
             print (station.fuels)
-            print ("Gasóleo simples..:", station.getPrice("Gasóleo simples"))
-            print ("Gasóleo especial.:", station.getPrice("Gasóleo especial"))
+            print ("Gasóleo simples..:", station.getPrice("Gasóleo simples"), "€", "(", station.getLastUpdate("Gasóleo simples"), ")")
+            print ("Gasóleo especial.:", station.getPrice("Gasóleo especial"), "€", "(", station.getLastUpdate("Gasóleo especial"), ")")
         else:
             print ("Gas Station not found!")
 
