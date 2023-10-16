@@ -115,7 +115,7 @@ class PrecosCombustiveisSensor(SensorEntity):
             "Latitude": self._station.latitude,
             "Longitude": self._station.longitude,
             "StationType": self._station.type,
-            "LastPriceUpdate": station.getLastUpdate(self._fuelName),
+            "LastPriceUpdate": self._station.getLastUpdate(self._fuelName),
         } 
 
     async def async_update(self) -> None:
