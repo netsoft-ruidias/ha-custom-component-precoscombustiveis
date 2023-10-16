@@ -98,6 +98,97 @@ sort:
   reverse: false
 ```
 
+Or, use the [custom:bar-card](https://github.com/custom-cards/bar-card) integration to display a nice graph:
+
+```yaml
+type: custom:stack-in-card
+cards:
+  - type: custom:mushroom-template-card
+    primary: Preços Combustíveis
+    secondary: Gasóleo Aditivado
+    icon: mdi:gas-station
+    icon_color: orange
+  - type: custom:bar-card
+    entities:
+      - entity: sensor.galp_garagem_parque_de_barcelos_lda_gasoleo_especial
+        name: Galp Manhente
+        color: '#FA551E'
+      - entity: sensor.galp_garagem_parque_de_barcelos_lda_gasoleo_especial_2
+        name: Galp Garagem Parque
+        color: '#FA551E'
+      - entity: sensor.alves_bandeira_ab_de_tamel_gasoleo_especial
+        name: Alves Bandeira
+        color: '#002262'
+      - entity: >-
+          sensor.freitas_casp_area_de_servico_portas_do_cavado_lda_gasoleo_especial
+        name: CASP
+        color: '#E75938'
+      - entity: sensor.generico_aparicio_carvalho_araujo_lda_gasoleo_especial
+        name: Galo Gamil
+        color: '#E75938'
+      - entity: sensor.repsol_e_s_barcelos_ii_gasoleo_especial
+        name: Repsol (escola)
+        color: '#FF8200'
+      - entity: sensor.leclerc_e_leclerc_barcelos_gasoleo_especial
+        name: E Leclerc
+        color: '#005ABB'
+      - entity: sensor.bp_bp_barcelos_frescainha_gasoleo_especial
+        name: BP Vila Frescainha
+        color: '#00AD5E'
+    height: 25px
+    decimal: 3
+    min: 0.5
+    max: 2.5
+    positions:
+      name: inside
+      value: inside
+      icon: outside
+      indicator: 'off'
+      minmax: 'off'
+    style: |
+      bar-card-name{
+        margin-right: 10px !important;
+        font-size: var(--paper-font-body1_-_font-size);
+        white-space: nowrap;
+      }
+      bar-card-background{
+        margin: 4px 0 4px 0 !important;
+      }
+      ha-card{
+        --bar-card-border-radius: 5px;
+      }
+      #states{
+        padding: 0 16px;
+      }
+      #states > * {
+          margin-bottom: 0px;
+      }
+```
+
+Which will result in the following card:
+
+![Sample Card](https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/blob/main/docs/bar-card.png?raw=true)
+
+## Map Card
+
+Since version v1.4.0 you can also add these entities to your map card, to show them in your map
+
+```yaml
+type: map
+entities:
+  - entity: zone.home
+  - entity: zone.other
+  - entity: person.one
+  - entity: person.two
+  - entity: person.three
+  - entity: sensor.galp_garagem_parque_de_barcelos_lda_gasoleo_especial
+    name: GALP
+  - entity: sensor.bp_bp_barcelos_frescainha_gasoleo_especial
+    name: BP
+hours_to_show: 12
+default_zoom: 12
+dark_mode: true
+```
 
 # Legal notice
 This is a personal project and isn't in any way affiliated with, sponsored or endorsed by [DGEG](https://www.dgeg.gov.pt/).
