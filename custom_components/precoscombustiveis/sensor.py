@@ -23,7 +23,6 @@ from .const import (
 from .dgeg import DGEG, Station
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 # Time between updating data from API
 SCAN_INTERVAL = timedelta(minutes=60)

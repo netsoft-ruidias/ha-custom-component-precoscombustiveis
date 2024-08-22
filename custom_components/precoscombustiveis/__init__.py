@@ -12,7 +12,6 @@ from .const import DOMAIN
 
 __version__ = "1.1.0"
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 PLATFORMS: list[str] = ["sensor"]
 
