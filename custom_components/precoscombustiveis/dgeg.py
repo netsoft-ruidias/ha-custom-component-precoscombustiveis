@@ -1,16 +1,17 @@
 """API to DGEG."""
-import aiohttp
+from typing import List, Optional, Dict
+from aiohttp import ClientSession
 import logging
 
 from datetime import datetime
 
 from .const import (
-    API_URI_TEMPLATE
+    API_URI_TEMPLATE,
+    API_STATIONS_LIST
 )
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
-
 
 class Station:
     """Represents a STATION card."""
@@ -80,6 +81,21 @@ class DGEG:
 
     def __init__(self, websession):
         self.websession = websession
+
+    async def list_stations(self) -> List[Dict]:
+        """Get list of all stations."""
+        try:
+            async with self._session.get(API_STATIONS_LIST) as response:
+                if response.status == 200:
+                    stations = await response.json()
+                    # Sort stations by name for better display
+                    return sorted(stations, key=lambda x: x.get('Nome', '').lower())
+                else:
+                    _LOGGER.error("Failed to fetch stations list. Status: %s", response.status)
+                    return []
+        except Exception as ex:
+            _LOGGER.error("Error fetching stations list: %s", str(ex))
+            return []
 
     async def getStation(self, id: str) -> Station:
         """Issue GAS STATION requests."""
