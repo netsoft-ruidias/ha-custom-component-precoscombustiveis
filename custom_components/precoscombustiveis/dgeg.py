@@ -8,7 +8,8 @@ from datetime import datetime
 
 from .const import (
     API_URI_TEMPLATE,
-    API_STATIONS_LIST
+    API_STATIONS_LIST,
+    DISTRITOS
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -85,7 +86,7 @@ class DGEG:
     async def list_stations(self, distrito_id: str) -> list[Dict]:
         """Get list of all stations."""
         try:
-            _LOGGER.debug(f"Fetching stations list for distrito Id:{id}...")
+            _LOGGER.debug(f"Fetching stations list for distrito Id:{distrito_id} ({DISTRITOS[distrito_id]})...")
             async with self.websession.get(
                 API_STATIONS_LIST.format(distrito_id), 
                 headers={ 

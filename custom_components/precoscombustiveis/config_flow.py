@@ -40,7 +40,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize flow."""
         self._stations: list = []
         self._selected_station: Dict[str, Any] = {}
-        self._distrito_id: str = ""
+        self._distrito_id: int = None
 
     async def async_step_user(
         self, user_input: Optional[Dict[str, Any]] = None
@@ -60,7 +60,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         # Store selected distrito and move to station selection
-        self._distrito_id = user_input["distrito_select"]
+        self._distrito_id = int(user_input["distrito_select"])
         return await self.async_step_station()
 
     async def async_step_station(
