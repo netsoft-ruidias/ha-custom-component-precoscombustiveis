@@ -3,6 +3,13 @@
     "config": {
         "step": {
             "user": {
+                "title": "Distrito",
+                "description": "Indique o distrito onde se encontra o posto de abastecimento.",
+                "data": {
+                    "district_select": "Distrito"
+                }
+            },
+            "station": {
                 "title": "Selecionar Posto de Abastecimento",
                 "description": "Encontrados {stations_count} postos. Por favor selecione o seu posto da lista.",
                 "data": {

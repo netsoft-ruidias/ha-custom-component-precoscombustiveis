@@ -17,6 +17,7 @@ from .const import (
     CONF_STATION_NAME,
     CONF_STATION_BRAND,
     CONF_STATION_ADDRESS,
+    DISTRITOS
 )
 from .dgeg import DGEG
 
@@ -39,33 +40,56 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize flow."""
         self._stations: list = []
         self._selected_station: Dict[str, Any] = {}
+        self._distrito_id: str = ""
 
     async def async_step_user(
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> FlowResult:
-        """Handle the initial step."""
+        """Handle the initial step - select distrito."""
         if user_input is None:
-            # Fetch stations list
+            # Create distrito selection list
+            distritos_list = {
+                str(id): name for id, name in DISTRITOS.items()
+            }
+
+            return self.async_show_form(
+                step_id="user",
+                data_schema=vol.Schema({
+                    vol.Required("distrito_select"): vol.In(distritos_list)
+                })
+            )
+
+        # Store selected distrito and move to station selection
+        self._distrito_id = user_input["distrito_select"]
+        return await self.async_step_station()
+
+    async def async_step_station(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> FlowResult:
+        """Handle station selection."""
+        if user_input is None:
+            # Fetch stations list for selected distrito
             session = async_get_clientsession(self.hass)
             api = DGEG(session)
-            self._stations = await api.list_stations()
+            self._stations = await api.list_stations(self._distrito_id)
 
             if not self._stations:
                 return self.async_abort(reason="no_stations")
 
             # Create selection list
             stations_list = {
-                str(station["Id"]): f"{station['Distrito']}/{station['Localidade']}: {station['Marca']} - {station['Nome']}"
+                str(station["Id"]): f"{station['Localidade']}: {station['Marca']} - {station['Nome']}"
                 for station in self._stations
             }
 
             return self.async_show_form(
-                step_id="user",
+                step_id="station",
                 data_schema=vol.Schema({
                     vol.Required("station_select"): vol.In(stations_list)
                 }),
                 description_placeholders={
-                    "stations_count": str(len(self._stations))
+                    "stations_count": str(len(self._stations)),
+                    "distrito": DISTRITOS[self._distrito_id]
                 }
             )
 

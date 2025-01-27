@@ -82,17 +82,22 @@ class DGEG:
     def __init__(self, websession):
         self.websession = websession
 
-    async def list_stations(self) -> list[Dict]:
+    async def list_stations(self, distrito_id: str) -> list[Dict]:
         """Get list of all stations."""
         try:
-            async with self.websession.get(API_STATIONS_LIST) as res:
+            _LOGGER.debug(f"Fetching stations list for distrito Id:{id}...")
+            async with self.websession.get(
+                API_STATIONS_LIST.format(distrito_id), 
+                headers={ 
+                    "Content-Type": "application/json" 
+                }
+            ) as res:
                 if res.status == 200:
                     json = await res.json()
                     # Sort stations by name for better display
                     return sorted(
                         json['resultado'],
                         key=lambda x: (
-                            x.get('Distrito', '').lower(),
                             x.get('Localidade', '').lower(),
                             x.get('Marca', '').lower(), 
                             x.get('Nome', '').lower()

@@ -3,6 +3,13 @@
     "config": {
         "step": {
             "user": {
+                "title": "Select Your Location",
+                "description": "Select the primary location for your gas station.",
+                "data": {
+                    "district_select": "Location"
+                }
+            },
+            "station": {
                 "title": "Select Gas Station",
                 "description": "Found {stations_count} stations. Please select your station from the list.",
                 "data": {
