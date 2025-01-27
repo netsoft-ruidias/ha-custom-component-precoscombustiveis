@@ -21,7 +21,6 @@ from .const import (
 from .dgeg import DGEG
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 DATA_SCHEMA = vol.Schema(
     { 
