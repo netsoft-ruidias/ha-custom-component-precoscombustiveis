@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
+    "version": "2.0.1",
     "domain": "precoscombustiveis",
     "name": "PrecosCombustiveis DGEG Integration",
     "documentation": "https://github.com/netsoft-ruidias/ha-custom-component-precoscombustiveis/blob/main/README.md",
