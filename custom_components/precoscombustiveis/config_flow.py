@@ -12,7 +12,6 @@ from .dgeg import DGEG
 from .const import DOMAIN, CONF_STATIONID
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 DATA_SCHEMA = vol.Schema(
     { 
