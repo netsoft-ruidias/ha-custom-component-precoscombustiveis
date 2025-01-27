@@ -3,21 +3,33 @@
     "config": {
         "step": {
             "user": {
-                "title": "Estação de Serviço",
-                "description": "Deverá introduzir o ID da estação de serviço de onde pretende obter os preços dos combustíveis. (Ir a [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), pesquisar o posto pretendido e copiar o `Id`)",
+                "title": "Distrito",
+                "description": "Indique o distrito onde se encontra o posto de abastecimento.",
                 "data": {
-                    "stationId": "Id da Estação de Serviço"
-                },
-                "data_description": {
-                    "stationId": "Identificador da Estação de Serviço"
+                    "distrito_select": "Distrito"
                 }
+            },
+            "station": {
+                "title": "Selecionar Posto de Abastecimento",
+                "description": "Encontrados {stations_count} postos. Por favor selecione o seu posto da lista.",
+                "data": {
+                    "station_select": "Posto de Abastecimento"
+                }
+            },
+            "confirm": {
+                "title": "Confirmar Seleção do Posto",
+                "description": "Deseja adicionar o seguinte posto?\n\nNome: {name}\nMarca: {brand}\nMorada: {address}"
             }
         },
         "error": {
-            "invalid_station": "Id inválido, estação de serviço não existe."
+            "cannot_connect": "Falha na ligação",
+            "invalid_station": "ID do posto inválido",
+            "unknown": "Erro inesperado"
         },
         "abort": {
-            "already_configured": "Esta integração já existe!"
+            "no_stations": "Nenhum posto encontrado. Por favor tente mais tarde.",
+            "station_not_found": "Posto selecionado não encontrado",
+            "already_configured": "Este posto já está configurado"
         }
     }
 }

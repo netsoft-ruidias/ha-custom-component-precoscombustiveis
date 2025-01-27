@@ -3,21 +3,33 @@
     "config": {
         "step": {
             "user": {
-                "title": "Add Gas Station",
-                "description": "Please type the service station ID from which you want to obtain the prices. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired station and copy the `Id`)",
+                "title": "Select Your Location",
+                "description": "Select the primary location for your gas station.",
                 "data": {
-                    "stationId": "Station Id"
-                },
-                "data_description": {
-                    "stationId": "Station Id Identifier"
+                    "distrito_select": "Location"
                 }
+            },
+            "station": {
+                "title": "Select Gas Station",
+                "description": "Found {stations_count} stations. Please select your station from the list.",
+                "data": {
+                    "station_select": "Gas Station"
+                }
+            },
+            "confirm": {
+                "title": "Confirm Station Selection",
+                "description": "Do you want to add the following station?\n\nName: {name}\nBrand: {brand}\nAddress: {address}"
             }
         },
         "error": {
-            "invalid_station": "Invalid StationId or gas station not found."
+            "cannot_connect": "Failed to connect",
+            "invalid_station": "Invalid station ID",
+            "unknown": "Unexpected error"
         },
         "abort": {
-            "already_configured": "Integration is already configured"
+            "no_stations": "No stations found. Please try again later.",
+            "station_not_found": "Selected station not found",
+            "already_configured": "This station is already configured"
         }
     }
 }
