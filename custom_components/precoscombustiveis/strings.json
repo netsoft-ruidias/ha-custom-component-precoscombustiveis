@@ -3,21 +3,26 @@
     "config": {
         "step": {
             "user": {
-                "title": "Add Credentials (user)",
-                "description": "Some description (user)",
+                "title": "Select Gas Station",
+                "description": "Found {stations_count} stations. Please select your station from the list.",
                 "data": {
-                    "stationId": "StationId"
-                },
-                "data_description": {
-                    "stationId": "Identificador da Estação de Combustível"
+                    "station_select": "Gas Station"
                 }
+            },
+            "confirm": {
+                "title": "Confirm Station Selection",
+                "description": "Do you want to add the following station?\n\nName: {name}\nBrand: {brand}\nAddress: {address}"
             }
         },
         "error": {
-            "invalid_station": "Invalid StationId or gas station not found."
+            "cannot_connect": "Failed to connect",
+            "invalid_station": "Invalid station ID",
+            "unknown": "Unexpected error"
         },
         "abort": {
-            "already_configured": "Integration is already configured"
+            "no_stations": "No stations found. Please try again later.",
+            "station_not_found": "Selected station not found",
+            "already_configured": "This station is already configured"
         }
     }
 }

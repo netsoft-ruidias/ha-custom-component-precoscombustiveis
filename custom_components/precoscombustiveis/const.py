@@ -14,5 +14,5 @@ CONF_STATION_BRAND = "station_brand"
 CONF_STATION_ADDRESS = "station_address"
 
 # API endpoints 
-API_STATIONS_LIST = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos"
+API_STATIONS_LIST = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PesquisarPostos?qtdPorPagina=99999&pagina=1"
 API_URI_TEMPLATE = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/GetDadosPosto?id={}"

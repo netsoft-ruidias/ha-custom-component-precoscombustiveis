@@ -10,7 +10,7 @@ from homeassistant.helpers.typing import ConfigType
 from .dgeg import DGEG
 from .const import DOMAIN
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
@@ -36,21 +36,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up the component from a config entry."""
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
-
-
-# async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-#     """Unload a config entry."""
-#     unload_ok = await hass.config_entries.async_forward_entry_unload(
-#         entry, DOMAIN)
-
-#     if unload_ok:
-#         for unsub in hass.data[DOMAIN].listeners:
-#             unsub()
-#         hass.data.pop(DOMAIN)
-
-#         return True
-
-#     return False
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:

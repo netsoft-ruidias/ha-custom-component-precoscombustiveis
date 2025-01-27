@@ -1,5 +1,6 @@
 """API to DGEG."""
-from typing import List, Optional, Dict
+from typing import Dict, Optional
+from datetime import datetime
 from aiohttp import ClientSession
 import logging
 
@@ -82,16 +83,24 @@ class DGEG:
     def __init__(self, websession):
         self.websession = websession
 
-    async def list_stations(self) -> List[Dict]:
+    async def list_stations(self) -> list[Dict]:
         """Get list of all stations."""
         try:
-            async with self._session.get(API_STATIONS_LIST) as response:
-                if response.status == 200:
-                    stations = await response.json()
+            async with self.websession.get(API_STATIONS_LIST) as res:
+                if res.status == 200:
+                    json = await res.json()
                     # Sort stations by name for better display
-                    return sorted(stations, key=lambda x: x.get('Nome', '').lower())
+                    return sorted(
+                        json['resultado'],
+                        key=lambda x: (
+                            x.get('Distrito', '').lower(),
+                            x.get('Localidade', '').lower(),
+                            x.get('Marca', '').lower(), 
+                            x.get('Nome', '').lower()
+                        )
+                    )
                 else:
-                    _LOGGER.error("Failed to fetch stations list. Status: %s", response.status)
+                    _LOGGER.error("Failed to fetch stations list. Status: %s", res.status)
                     return []
         except Exception as ex:
             _LOGGER.error("Error fetching stations list: %s", str(ex))

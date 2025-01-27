@@ -1,7 +1,7 @@
 """Config flow for PrecosCombustiveis integration."""
+from __future__ import annotations
 from typing import Any, Dict, Optional
 import voluptuous as vol
-from __future__ import annotations
 
 import logging
 import async_timeout
@@ -56,7 +56,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             # Create selection list
             stations_list = {
-                str(station["Id"]): f"{station['Nome']} - {station['Marca']} ({station['Morada']})"
+                str(station["Id"]): f"{station['Distrito']}/{station['Localidade']}: {station['Marca']} - {station['Nome']}"
                 for station in self._stations
             }
 
