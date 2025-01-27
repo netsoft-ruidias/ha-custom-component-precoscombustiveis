@@ -6,7 +6,7 @@
                 "title": "Distrito",
                 "description": "Indique o distrito onde se encontra o posto de abastecimento.",
                 "data": {
-                    "district_select": "Distrito"
+                    "distrito_select": "Distrito"
                 }
             },
             "station": {

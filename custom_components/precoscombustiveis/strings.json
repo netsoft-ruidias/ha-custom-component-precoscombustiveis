@@ -6,7 +6,7 @@
                 "title": "Select Your Location",
                 "description": "Select the primary location for your gas station.",
                 "data": {
-                    "district_select": "Location"
+                    "distrito_select": "District"
                 }
             },
             "station": {
