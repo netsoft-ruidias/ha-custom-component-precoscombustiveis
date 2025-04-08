@@ -1,5 +1,7 @@
 """The PrecosCombustiveis integration."""
 from __future__ import annotations
+import os
+import shutil
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -33,6 +35,8 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up the component from a config entry."""
+    await copy_images_to_www(hass)
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -41,3 +45,24 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
     # await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
+
+async def copy_images_to_www(hass: HomeAssistant):
+    source_dir = os.path.join(os.path.dirname(__file__), "images")
+    target_dir = hass.config.path("www", "precoscombustiveis")
+
+    try:
+        os.makedirs(target_dir, exist_ok=True)
+
+        for filename in os.listdir(source_dir):
+            source_file = os.path.join(source_dir, filename)
+            target_file = os.path.join(target_dir, filename)
+
+            # Copiar apenas se o ficheiro não existir ou for diferente (upgrade)
+            if not os.path.exists(target_file):
+                shutil.copy(source_file, target_file)
+                _LOGGER.info(f"Copied: {filename}")
+            else:
+                _LOGGER.debug(f"Ignored (alterady exists): {filename}")
+
+    except Exception as e:
+        _LOGGER.error(f"Error copying images: {e}")
