@@ -43,7 +43,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
-    # await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
 
 async def copy_images_to_www(hass: HomeAssistant):
@@ -57,12 +56,12 @@ async def copy_images_to_www(hass: HomeAssistant):
             source_file = os.path.join(source_dir, filename)
             target_file = os.path.join(target_dir, filename)
 
-            # Copiar apenas se o ficheiro não existir ou for diferente (upgrade)
+            # Copy only if file does not exist or is different (upgrade)
             if not os.path.exists(target_file):
                 shutil.copy(source_file, target_file)
                 _LOGGER.info(f"Copied: {filename}")
             else:
-                _LOGGER.debug(f"Ignored (alterady exists): {filename}")
+                _LOGGER.debug(f"Ignored (because it already exists): {filename}")
 
     except Exception as e:
         _LOGGER.error(f"Error copying images: {e}")
