@@ -100,6 +100,15 @@ class PrecosCombustiveisSensor(SensorEntity):
         return self._icon
 
     @property
+    def entity_picture(self):
+        """Return the entity picture."""        
+        if self._station.brand and self._station.brand.lower() != "genérico":
+            brand_name = self._station.brand.lower().replace(" ", "_").replace("-", "_")
+            return f"/local/precoscombustiveis/{brand_name}.png"
+        else:
+            return ""
+
+    @property
     def attribution(self):
         return ATTRIBUTION
 
