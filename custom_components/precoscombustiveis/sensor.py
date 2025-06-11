@@ -1,12 +1,12 @@
 """Platform for sensor integration."""
 from __future__ import annotations
 
-import aiohttp
 import logging
-
+import unicodedata
 from datetime import timedelta
 from typing import Any, Dict
 
+import aiohttp
 from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
                                              SensorStateClass)
 from homeassistant.config_entries import ConfigEntry
@@ -15,10 +15,10 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
-    DEFAULT_ICON, 
-    DOMAIN, 
-    UNIT_OF_MEASUREMENT, 
-    ATTRIBUTION, 
+    DEFAULT_ICON,
+    DOMAIN,
+    UNIT_OF_MEASUREMENT,
+    ATTRIBUTION,
     CONF_STATIONID)
 from .dgeg import DGEG, Station
 
@@ -27,8 +27,8 @@ _LOGGER = logging.getLogger(__name__)
 # Time between updating data from API
 SCAN_INTERVAL = timedelta(minutes=60)
 
-async def async_setup_entry(hass: HomeAssistant, 
-                            config_entry: ConfigEntry, 
+async def async_setup_entry(hass: HomeAssistant,
+                            config_entry: ConfigEntry,
                             async_add_entities: AddEntitiesCallback):
     """Setup sensor platform."""
     session = async_get_clientsession(hass, True)
@@ -36,11 +36,11 @@ async def async_setup_entry(hass: HomeAssistant,
 
     config = config_entry.data
     station = await api.getStation(config[CONF_STATIONID])
-    
+
     sensors = [PrecosCombustiveisSensor(
-        api, 
-        config[CONF_STATIONID], 
-        station, 
+        api,
+        config[CONF_STATIONID],
+        station,
         fuel["TipoCombustivel"]
     ) for fuel in station.fuels]
     async_add_entities(sensors, update_before_add=True)
@@ -55,7 +55,7 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._stationId = stationId
         self._station = station
         self._fuelName = fuelName
-        
+
         self._icon = DEFAULT_ICON
         self._unit_of_measurement = UNIT_OF_MEASUREMENT
         self._device_class = SensorDeviceClass.MONETARY
@@ -101,9 +101,10 @@ class PrecosCombustiveisSensor(SensorEntity):
 
     @property
     def entity_picture(self):
-        """Return the entity picture."""        
+        """Return the entity picture."""
         if self._station.brand and self._station.brand.lower() != "genérico":
-            brand_name = self._station.brand.lower().replace(" ", "_").replace("-", "_")
+            brand_name = unicodedata.normalize('NFD', self._station.brand.lower())
+            brand_name =  ''.join(c for c in brand_name if c.isalpha())
             return f"/local/precoscombustiveis/{brand_name}.png"
         else:
             return ""
@@ -124,7 +125,7 @@ class PrecosCombustiveisSensor(SensorEntity):
             "Longitude": self._station.longitude,
             "StationType": self._station.type,
             "LastPriceUpdate": self._station.getLastUpdate(self._fuelName),
-        } 
+        }
 
     async def async_update(self) -> None:
         """Fetch new state data for the sensor."""
