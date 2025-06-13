@@ -52,13 +52,16 @@ async def copy_images_to_www(hass: HomeAssistant):
     try:
         os.makedirs(target_dir, exist_ok=True)
 
-        for filename in os.listdir(source_dir):
+        # Use async_add_executor_job to avoid blocking the event loop
+        filenames = await hass.async_add_executor_job(os.listdir, source_dir)
+
+        for filename in filenames:
             source_file = os.path.join(source_dir, filename)
             target_file = os.path.join(target_dir, filename)
 
             # Copy only if file does not exist or is different (upgrade)
             if not os.path.exists(target_file):
-                shutil.copy(source_file, target_file)
+                await hass.async_add_executor_job(shutil.copy, source_file, target_file)
                 _LOGGER.info(f"Copied: {filename}")
             else:
                 _LOGGER.debug(f"Ignored (because it already exists): {filename}")
