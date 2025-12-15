@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  homeassistant:
+    build:
+      context: .
+      args:
+        HA_VERSION: stable
+    container_name: homeassistant-dev
+    restart: unless-stopped
+    environment:
+      TZ: Etc/UTC
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./config:/config
+      - ./custom_components:/config/custom_components
+      - ./requirements.txt:/config/requirements.txt:ro

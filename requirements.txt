@@ -1,0 +1,4 @@
+aiohttp
+async-timeout
+homeassistant
+voluptuous

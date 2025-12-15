@@ -1,3 +1,5 @@
+"""Constants for this integration."""
+
 DOMAIN = "precoscombustiveis"
 PLATFORM = "sensor"
 DOMAIN_DATA = f"{DOMAIN}_data"
@@ -14,6 +16,7 @@ CONF_STATION_BRAND = "station_brand"
 CONF_STATION_ADDRESS = "station_address"
 
 # API endpoints 
+API_ENDPOINT = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/"
 API_STATIONS_LIST = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PesquisarPostos?idDistrito={}&qtdPorPagina=99999&pagina=1"
 API_URI_TEMPLATE = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/GetDadosPosto?id={}"
 
@@ -27,7 +30,7 @@ DISTRITOS = {
     7: "Évora",
     8: "Faro",
     9: "Guarda",
-    10: "Leiria", 
+    10: "Leiria",
     11: "Lisboa",
     12: "Portalegre",
     13: "Porto",

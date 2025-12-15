@@ -1,14 +1,10 @@
 """Config flow for PrecosCombustiveis integration."""
 from __future__ import annotations
 from typing import Any, Dict, Optional
+import logging
 import voluptuous as vol
 
-import logging
-import async_timeout
-
 from homeassistant import config_entries
-from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
@@ -21,16 +17,17 @@ from .const import (
 )
 from .dgeg import DGEG
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
+logger.level = logging.INFO
 
 DATA_SCHEMA = vol.Schema(
-    { 
+    {
         vol.Required(CONF_STATIONID): str
     }
 )
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """PrecosCombustiveis config flow."""
 
     VERSION = 1
@@ -40,11 +37,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize flow."""
         self._stations: list = []
         self._selected_station: Dict[str, Any] = {}
-        self._distrito_id: int = None
+        self._distrito_id: int = 0
 
     async def async_step_user(
         self, user_input: Optional[Dict[str, Any]] = None
-    ) -> FlowResult:
+    ) -> Any:
         """Handle the initial step - select distrito."""
         if user_input is None:
             # Create distrito selection list
@@ -65,7 +62,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_station(
         self, user_input: Optional[Dict[str, Any]] = None
-    ) -> FlowResult:
+    ) -> Any:
         """Handle station selection."""
         if user_input is None:
             # Fetch stations list for selected distrito
@@ -114,7 +111,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_confirm(
         self, user_input: Optional[Dict[str, Any]] = None
-    ) -> FlowResult:
+    ) -> Any:
         """Confirm the station selection."""
         if user_input is None:
             return self.async_show_form(
@@ -126,9 +123,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             )
 
+        # Ensure each station has its own unique config entry (and therefore a device)
+        await self.async_set_unique_id(str(self._selected_station[CONF_STATIONID]))
+        self._abort_if_unique_id_configured()
+
         # Create the config entry
         return self.async_create_entry(
             title=f"{self._selected_station[CONF_STATION_NAME]} - {self._selected_station[CONF_STATION_BRAND]}",
             data=self._selected_station,
         )
-
