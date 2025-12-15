@@ -1,10 +1,12 @@
+"""Simple test file to demonstrate the DGEG API usage."""
+
 import asyncio
 import aiohttp
 
-from datetime import datetime
 from custom_components.precoscombustiveis.dgeg import DGEG, Station
 
 async def main():
+    """Simple test function to demonstrate the DGEG API usage."""
     async with aiohttp.ClientSession() as session:
         api = DGEG(session)
 
@@ -12,9 +14,9 @@ async def main():
         print("Please type the service station ID from which you want to obtain the prices.")
         print("Go to https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos,")
         print("search for the desired station and copy the `Id`.")
-        stationId = input("Enter the Gas Station Id..: ") or "65167"
+        station_id = input("Enter the Gas Station Id..: ") or "65167"
 
-        station = await api.getStation(stationId)
+        station: Station = await api.getStation(station_id)
         if (station):
             print ("Station Id.......:", station.id)
             print ("Station Name.....:", station.name)
