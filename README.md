@@ -116,7 +116,7 @@ entities:
 
 ### Auto-Entities Card
 
-Show all diesel prices automatically:
+Using [lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities) to show all diesel prices automatically:
 
 ```yaml
 type: custom:auto-entities
@@ -132,6 +132,8 @@ sort:
 ```
 
 ### Bar Card
+
+Using [bar-card](https://github.com/custom-cards/bar-card) for visual comparison:
 
 ```yaml
 type: custom:bar-card
