@@ -16,7 +16,7 @@ async def main():
         print("search for the desired station and copy the `Id`.")
         station_id = input("Enter the Gas Station Id..: ") or "65167"
 
-        station: Station = await api.getStation(station_id)
+        station: Station = await api.get_station(int(station_id))
         if (station):
             print ("Station Id.......:", station.id)
             print ("Station Name.....:", station.name)

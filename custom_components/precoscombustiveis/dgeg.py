@@ -92,13 +92,17 @@ class DGEG:
     def __init__(self, websession):
         self.websession = websession
 
-    async def list_stations(self, distrito_id: str) -> list[Dict]:
+    async def list_stations(self, distrito_id: int) -> list[Dict]:
         """Get list of all stations."""
         try:
-            logger.debug(f"Fetching stations list for distrito Id:{distrito_id} ({DISTRITOS[distrito_id]})...")
+            logger.info(
+                "Fetching stations list for distrito Id:%s (%s)...",
+                distrito_id,
+                DISTRITOS[distrito_id])
+
             async with self.websession.get(
-                API_STATIONS_LIST.format(distrito_id), 
-                headers={ 
+                API_STATIONS_LIST.format(distrito_id),
+                headers={
                     "Content-Type": "application/json" 
                 },
                 ssl=False  # Disable SSL verification
@@ -121,15 +125,15 @@ class DGEG:
                     logger.error("Failed to fetch stations list. Status: %s", res.status)
                     return []
         except Exception as ex:
-            logger.error("Error fetching stations list: %s", str(ex))
+            logger.error("Error fetching stations list: %s", ex)
             return []
 
-    async def getStation(self, id: str) -> Station:
+    async def get_station(self, station_id: int) -> Station:
         """Issue GAS STATION requests."""
         try:
-            logger.debug(f"Fetching details for gas station Id:{id}...")
+            logger.debug("Fetching details for gas station Id: %s...", station_id)
             async with self.websession.get(
-                API_URI_TEMPLATE.format(id), 
+                API_URI_TEMPLATE.format(station_id),
                 headers={ 
                     "Content-Type": "application/json" 
                 },
@@ -145,9 +149,9 @@ class DGEG:
             logger.error(err)
             raise err
 
-    async def testStation(self, id: str) -> str:
+    async def test_station(self, station_id: int) -> str:
         """Test if gas stationId exists."""
-        station = await self.getStation(id)
+        station = await self.get_station(station_id)
         if (not (not station.name and not station.fuels)):
             return station.name
         else:
