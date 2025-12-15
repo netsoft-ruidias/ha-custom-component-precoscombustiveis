@@ -1,10 +1,9 @@
 """API to DGEG."""
-from typing import Dict, Optional
-from datetime import datetime
-from aiohttp import ClientSession
-import logging
 
+import logging
+from typing import Dict
 from datetime import datetime
+import aiohttp
 
 from .const import (
     API_URI_TEMPLATE,
@@ -12,7 +11,7 @@ from .const import (
     DISTRITOS
 )
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class Station:
     """Represents a STATION card."""
@@ -23,22 +22,27 @@ class Station:
         
     @property
     def id(self):
+        """Return the station ID."""
         return self._id
 
     @property
     def name(self):
+        """Return the station NAME."""
         return self._data["Nome"]
 
     @property
     def brand(self):
+        """Return the station BRAND."""
         return self._data["Marca"]
 
     @property
     def type(self):
+        """Return the station TYPE."""
         return self._data["TipoPosto"]
 
     @property
     def address(self):
+        """Return the station ADDRESS."""
         if self._data["Morada"]:
             return [
                 self._data["Morada"]["Morada"],
@@ -50,17 +54,21 @@ class Station:
 
     @property
     def latitude(self) -> float:
+        """Return the station LATITUDE."""
         return float(self._data["Morada"]["Latitude"])
     
     @property
     def longitude(self) -> float:
+        """Return the station LONGITUDE."""
         return float(self._data["Morada"]["Longitude"])
 
     @property
     def fuels(self):
+        """Return the station FUELS."""
         return self._data["Combustiveis"]
 
-    def getLastUpdate(self, fuelType) -> datetime:
+    def getLastUpdate(self, fuelType) -> datetime | None:
+        """Return the station LAST UPDATE for a given fuel type."""
         fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuelType][0]
         if (fuel):
             return datetime.strptime(
@@ -69,6 +77,7 @@ class Station:
         return None
 
     def getPrice(self, fuelType) -> float:
+        """Return the station PRICE for a given fuel type."""
         fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuelType][0]
         if (fuel):               
             return float(fuel["Preco"]
@@ -86,7 +95,7 @@ class DGEG:
     async def list_stations(self, distrito_id: str) -> list[Dict]:
         """Get list of all stations."""
         try:
-            _LOGGER.debug(f"Fetching stations list for distrito Id:{distrito_id} ({DISTRITOS[distrito_id]})...")
+            logger.debug(f"Fetching stations list for distrito Id:{distrito_id} ({DISTRITOS[distrito_id]})...")
             async with self.websession.get(
                 API_STATIONS_LIST.format(distrito_id), 
                 headers={ 
@@ -96,26 +105,29 @@ class DGEG:
             ) as res:
                 if res.status == 200:
                     json = await res.json()
-                    # Sort stations by name for better display
+                    # Sort stations by name for better display (handle None values defensively)
+                    def _safe_lower(value):
+                        return value.lower() if isinstance(value, str) else ""
+
                     return sorted(
-                        json['resultado'],
+                        json.get('resultado') or [],
                         key=lambda x: (
-                            x.get('Localidade', '').lower(),
-                            x.get('Marca', '').lower(), 
-                            x.get('Nome', '').lower()
+                            _safe_lower(x.get('Localidade')),
+                            _safe_lower(x.get('Marca')),
+                            _safe_lower(x.get('Nome'))
                         )
                     )
                 else:
-                    _LOGGER.error("Failed to fetch stations list. Status: %s", res.status)
+                    logger.error("Failed to fetch stations list. Status: %s", res.status)
                     return []
         except Exception as ex:
-            _LOGGER.error("Error fetching stations list: %s", str(ex))
+            logger.error("Error fetching stations list: %s", str(ex))
             return []
 
     async def getStation(self, id: str) -> Station:
         """Issue GAS STATION requests."""
         try:
-            _LOGGER.debug(f"Fetching details for gas station Id:{id}...")
+            logger.debug(f"Fetching details for gas station Id:{id}...")
             async with self.websession.get(
                 API_URI_TEMPLATE.format(id), 
                 headers={ 
@@ -130,7 +142,8 @@ class DGEG:
                         json['resultado'])
                 raise Exception("Could not retrieve gas station details from API")
         except aiohttp.ClientError as err:
-            _LOGGER.error(err)
+            logger.error(err)
+            raise err
 
     async def testStation(self, id: str) -> str:
         """Test if gas stationId exists."""
@@ -138,5 +151,5 @@ class DGEG:
         if (not (not station.name and not station.fuels)):
             return station.name
         else:
-            return None
-        #return not (not station.name and not station.fuels)
+            return ""
+        
