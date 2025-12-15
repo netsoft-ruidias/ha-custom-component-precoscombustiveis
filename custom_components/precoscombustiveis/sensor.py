@@ -13,6 +13,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.device_registry import DeviceInfo
 
 from .const import (
     DEFAULT_ICON,
@@ -22,7 +23,8 @@ from .const import (
     CONF_STATIONID)
 from .dgeg import DGEG, Station
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
+logger.level = logging.INFO
 
 # Time between updating data from API
 SCAN_INTERVAL = timedelta(minutes=60)
@@ -57,8 +59,8 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._fuel_name = fuel_name
 
         # Provide name and unique_id via HA entity attributes to avoid overriding cached_property
-        self._attr_name = f"{self._station.brand} {self._station.name} {self._fuel_name}"
         self._attr_unique_id = f"{DOMAIN}-{self._station_id}-{self._fuel_name}".lower()
+        self._attr_name = f"{self._station.brand} {self._station.name} {self._fuel_name}"
         self._attr_available = True
         self._attr_native_value = None
         self._attr_icon = DEFAULT_ICON
@@ -69,6 +71,13 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._attr_entity_picture = self._get_entity_picture(self._station)
         self._attr_extra_state_attributes = self._build_extra_state_attributes(
             self._station
+        )
+
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, str(self._station_id))},
+            name=self._station.name,
+            model=self._station.brand,
+            manufacturer="DGEG",
         )
 
     def _get_entity_picture(self, station: Station) -> str | None:
@@ -101,4 +110,4 @@ class PrecosCombustiveisSensor(SensorEntity):
                 self._attr_available = True
         except aiohttp.ClientError as err:
             self._attr_available = False
-            _LOGGER.exception("Error updating data from DGEG API. %s", err)
+            logger.exception("Error updating data from DGEG API. %s", err)

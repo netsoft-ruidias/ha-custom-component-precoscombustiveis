@@ -18,6 +18,7 @@ from .const import (
 from .dgeg import DGEG
 
 logger = logging.getLogger(__name__)
+logger.level = logging.INFO
 
 DATA_SCHEMA = vol.Schema(
     {
@@ -126,6 +127,10 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             )
 
+        # Ensure each station has its own unique config entry (and therefore a device)
+        await self.async_set_unique_id(self._selected_station[CONF_STATIONID])
+        self._abort_if_unique_id_configured()
+        
         # Create the config entry
         return self.async_create_entry(
             title=f"{self._selected_station[CONF_STATION_NAME]} - {self._selected_station[CONF_STATION_BRAND]}",

@@ -41,7 +41,7 @@ class Station:
         return self._data["TipoPosto"]
 
     @property
-    def address(self):
+    def address(self) -> list[str]:
         """Return the station ADDRESS."""
         if self._data["Morada"]:
             return [
@@ -50,7 +50,7 @@ class Station:
                 self._data["Morada"]["CodPostal"]
             ]
         else:
-            return None
+            return []
 
     @property
     def latitude(self) -> float:
