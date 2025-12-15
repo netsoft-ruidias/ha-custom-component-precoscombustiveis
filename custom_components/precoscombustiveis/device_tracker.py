@@ -119,6 +119,8 @@ class StationDeviceTracker(PrecosCombustiveisEntity, TrackerEntity):
             return {}
 
         return {
+            "gas_station_id": self._station_id,
+            "station_name": station.name,
             "address": station.address,
             "station_type": station.type,
         }

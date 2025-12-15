@@ -99,9 +99,7 @@ Each fuel sensor includes these attributes:
 
 | Attribute           | Description                 |
 | ------------------- | --------------------------- |
-| `gas_station_id`    | DGEG station ID             |
 | `brand`             | Station brand               |
-| `station_name`      | Station name                |
 | `last_price_update` | When price was last updated |
 | `last_fetch_at`     | When data was last fetched  |
 
@@ -109,12 +107,14 @@ Each fuel sensor includes these attributes:
 
 Each station also has a device tracker entity with GPS coordinates that automatically appears on the Home Assistant map.
 
-| Attribute      | Description     |
-| -------------- | --------------- |
-| `latitude`     | GPS latitude    |
-| `longitude`    | GPS longitude   |
-| `address`      | Full address    |
-| `station_type` | Type of station |
+| Attribute        | Description     |
+| ---------------- | --------------- |
+| `gas_station_id` | DGEG station ID |
+| `station_name`   | Station name    |
+| `latitude`       | GPS latitude    |
+| `longitude`      | GPS longitude   |
+| `address`        | Full address    |
+| `station_type`   | Type of station |
 
 ## Dashboard Examples
 

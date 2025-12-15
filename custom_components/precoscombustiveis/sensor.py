@@ -132,9 +132,7 @@ class PrecosCombustiveisSensor(PrecosCombustiveisEntity, SensorEntity):
             return {}
 
         return {
-            "gas_station_id": self._station_id,
             "brand": station.brand,
-            "station_name": station.name,
             "last_price_update": station.getLastUpdate(self._fuel_type),
             "last_fetch_at": self.coordinator.last_fetch_at,
         }
