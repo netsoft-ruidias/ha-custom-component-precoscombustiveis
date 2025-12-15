@@ -3,10 +3,24 @@
   "config": {
     "step": {
       "user": {
+        "title": "Adicionar Posto",
+        "description": "Escolha como pretende adicionar postos de abastecimento.",
+        "data": {
+          "method": "Método"
+        }
+      },
+      "distrito": {
         "title": "Selecionar Distrito",
         "description": "Selecione o distrito onde se encontram os postos de abastecimento.",
         "data": {
           "distrito_select": "Distrito"
+        }
+      },
+      "station_id": {
+        "title": "Adicionar por ID",
+        "description": "Introduza o ID do posto do site da DGEG.\nPode encontrá-lo no URL ao visualizar um posto.",
+        "data": {
+          "station_id": "ID do Posto"
         }
       },
       "localidade": {
@@ -27,13 +41,15 @@
     "error": {
       "cannot_connect": "Falha na ligação à API da DGEG",
       "invalid_station": "ID do posto inválido",
+      "invalid_station_id": "Por favor introduza um ID de posto válido",
+      "station_not_found": "Posto não encontrado. Verifique o ID.",
       "unknown": "Erro inesperado"
     },
     "abort": {
       "no_stations": "Nenhum posto encontrado neste distrito.",
       "no_stations_selected": "Nenhum posto selecionado.",
       "station_not_found": "Posto selecionado não encontrado",
-      "already_configured": "Esta cidade já está configurada",
+      "already_configured": "Este posto já está configurado",
       "all_cities_configured": "Todas as cidades deste distrito já estão configuradas"
     }
   },

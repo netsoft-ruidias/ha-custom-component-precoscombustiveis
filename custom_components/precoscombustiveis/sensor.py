@@ -9,6 +9,7 @@ from typing import Any
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
+    SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -70,6 +71,7 @@ class PrecosCombustiveisSensor(PrecosCombustiveisEntity, SensorEntity):
     """Sensor representing a fuel price at a gas station."""
 
     _attr_device_class = SensorDeviceClass.MONETARY
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = UNIT_OF_MEASUREMENT
     _attr_icon = DEFAULT_ICON
     _attr_attribution = ATTRIBUTION

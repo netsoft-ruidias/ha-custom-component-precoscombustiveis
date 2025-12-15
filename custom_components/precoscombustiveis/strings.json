@@ -3,10 +3,24 @@
   "config": {
     "step": {
       "user": {
+        "title": "Add Gas Station",
+        "description": "Choose how you want to add gas stations.",
+        "data": {
+          "method": "Method"
+        }
+      },
+      "distrito": {
         "title": "Select District",
         "description": "Select the district where the gas stations are located.",
         "data": {
           "distrito_select": "District"
+        }
+      },
+      "station_id": {
+        "title": "Add by Station ID",
+        "description": "Enter the station ID from the DGEG website.\nYou can find it in the URL when viewing a station.",
+        "data": {
+          "station_id": "Station ID"
         }
       },
       "localidade": {
@@ -27,13 +41,15 @@
     "error": {
       "cannot_connect": "Failed to connect to DGEG API",
       "invalid_station": "Invalid station ID",
+      "invalid_station_id": "Please enter a valid station ID",
+      "station_not_found": "Station not found. Please check the ID.",
       "unknown": "Unexpected error"
     },
     "abort": {
       "no_stations": "No stations found in this district.",
       "no_stations_selected": "No stations selected.",
       "station_not_found": "Selected station not found",
-      "already_configured": "This city is already configured",
+      "already_configured": "This station is already configured",
       "all_cities_configured": "All cities in this district are already configured"
     }
   },
