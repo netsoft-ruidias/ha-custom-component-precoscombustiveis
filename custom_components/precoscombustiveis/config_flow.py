@@ -39,10 +39,6 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._selected_station: Dict[str, Any] = {}
         self._distrito_id: int = 0
 
-    def is_matching(self, *args, **kwargs) -> bool:
-        """Indicate this flow does not attempt to match incoming config entries."""
-        return False
-
     async def async_step_user(
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> Any:
@@ -130,7 +126,7 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Ensure each station has its own unique config entry (and therefore a device)
         await self.async_set_unique_id(str(self._selected_station[CONF_STATIONID]))
         self._abort_if_unique_id_configured()
-        
+
         # Create the config entry
         return self.async_create_entry(
             title=f"{self._selected_station[CONF_STATION_NAME]} - {self._selected_station[CONF_STATION_BRAND]}",

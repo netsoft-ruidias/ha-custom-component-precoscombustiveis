@@ -142,7 +142,7 @@ class DGEG:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
                     return Station(
-                        id,
+                        station_id,
                         json['resultado'])
                 raise Exception("Could not retrieve gas station details from API")
         except aiohttp.ClientError as err:
