@@ -41,21 +41,39 @@ The author of this project categorically rejects any and all responsibility for 
 
 ## Configuration
 
-### Adding a City
+### Method 1: Search by Location (Recommended)
 
 1. Go to **Settings > Devices & Services**
 2. Click **+ Add Integration**
 3. Search for `Preços Combustíveis`
-4. Select your **District** (Distrito)
-5. Select your **City** (Localidade)
-6. Select the **Gas Stations** you want to monitor
-7. Click **Submit**
+4. Choose **🔍 Pesquisar por localidade**
+5. Select your **District** (Distrito)
+6. Select your **City** (Localidade)
+7. Select the **Gas Stations** you want to monitor
+8. Click **Submit**
 
 The integration will create:
 
 - One entry named `<City>, <District>`
 - One device per gas station
 - One sensor per fuel type at each station
+
+### Method 2: Add by Station ID
+
+Some gas stations are registered under different locality names in the DGEG database.
+
+In these cases, you can add stations directly by their ID:
+
+1. Go to **Settings > Devices & Services**
+2. Click **+ Add Integration**
+3. Search for `Preços Combustíveis`
+4. Choose **🔢 Adicionar por ID da estação**
+5. Enter the **Station ID**
+6. Click **Submit**
+
+#### How to Find the Station ID
+
+1. Go to [precoscombustiveis.dgeg.gov.pt](https://precoscombustiveis.dgeg.gov.pt/)
 
 ### Adding More Stations
 
@@ -100,72 +118,32 @@ Each station also has a device tracker entity with GPS coordinates that automati
 
 ## Dashboard Examples
 
-### Entities Card
+### Fuel Price Card ⭐
 
-```yaml
-type: entities
-title: BP Aguada de Baixo
-entities:
-  - entity: sensor.bp_bp_aguada_de_baixo_oeste_gasoleo_simples
-    name: Gasóleo simples
-  - entity: sensor.bp_bp_aguada_de_baixo_oeste_gasoleo_especial
-    name: Gasóleo especial
-  - entity: sensor.bp_bp_aguada_de_baixo_oeste_gasolina_simples_95
-    name: Gasolina 95
-```
+A custom Lovelace card designed specifically for this integration with dynamic color coding (green → yellow → red based on price).
 
-### Auto-Entities Card
+|              Vertical Layout               |               Horizontal Layout                |
+| :----------------------------------------: | :--------------------------------------------: |
+| ![Vertical](docs/images/card_vertical.png) | ![Horizontal](docs/images/card_horizontal.png) |
 
-Using [lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities) to show all diesel prices automatically:
+**Features:**
 
-```yaml
-type: custom:auto-entities
-card:
-  type: entities
-  title: Diesel Prices
-filter:
-  include:
-    - entity_id: /sensor\..*_gasoleo_simples$/
-sort:
-  method: state
-  numeric: true
-```
+- 🎨 Dynamic color coding based on price comparison
+- 🖼️ Automatic brand logos from entity_picture
+- 📱 Two layouts (vertical/horizontal)
+- 🔧 Visual editor - no YAML needed
 
-### Bar Card
+📦 **Install:** [fuel-price-card](https://github.com/fcachado/fuel-price-card)
 
-Using [bar-card](https://github.com/custom-cards/bar-card) for visual comparison:
+### Other Card Options
 
-```yaml
-type: custom:bar-card
-title: Fuel Prices Comparison
-entities:
-  - entity: sensor.bp_bp_aguada_de_baixo_oeste_gasoleo_simples
-    name: BP
-    color: "#00AD5E"
-  - entity: sensor.shell_shell_aguada_de_baixo_gasoleo_simples
-    name: Shell
-    color: "#FFD500"
-height: 30px
-min: 1.0
-max: 2.0
-positions:
-  name: inside
-  value: inside
-```
-
-### Map Card
-
-```yaml
-type: map
-title: Nearby Gas Stations
-entities:
-  - entity: zone.home
-  - entity: sensor.bp_bp_aguada_de_baixo_oeste_gasoleo_simples
-    name: BP
-  - entity: sensor.shell_shell_aguada_de_baixo_gasoleo_simples
-    name: Shell
-default_zoom: 13
-```
+| Card                | Description                                     | Documentation                                 |
+| ------------------- | ----------------------------------------------- | --------------------------------------------- |
+| **Fuel Price Card** | Dynamic color coding based on price comparison  | [📄 View Docs](docs/cards/fuel-price-card.md) |
+| **Bar Card**        | Visual comparison with colored progress bars    | [📄 View Docs](docs/cards/bar-card.md)        |
+| **Map Card**        | Display station locations on an interactive map | [📄 View Docs](docs/cards/map-card.md)        |
+| **Mini Graph Card** | Price history with smooth lines and gradients   | [📄 View Docs](docs/cards/mini-graph-card.md) |
+| **Mushroom Chips**  | Compact summary card with price ranges          | [📄 View Docs](docs/cards/mushroom-chips.md)  |
 
 ## Migration from v2.x
 
