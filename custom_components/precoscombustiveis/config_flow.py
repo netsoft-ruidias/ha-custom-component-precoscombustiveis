@@ -128,7 +128,7 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         # Ensure each station has its own unique config entry (and therefore a device)
-        await self.async_set_unique_id(self._selected_station[CONF_STATIONID])
+        await self.async_set_unique_id(str(self._selected_station[CONF_STATIONID]))
         self._abort_if_unique_id_configured()
         
         # Create the config entry
