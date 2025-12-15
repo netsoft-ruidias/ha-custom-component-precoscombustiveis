@@ -1,139 +1,138 @@
-"""Platform for sensor integration."""
+"""Sensor platform for PrecosCombustiveis integration."""
+
 from __future__ import annotations
 
 import logging
 import unicodedata
-from datetime import timedelta
-from typing import Any, Dict
+from typing import Any
 
-import aiohttp
-from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
-                                             SensorStateClass)
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import (
-    DEFAULT_ICON,
-    DOMAIN,
-    UNIT_OF_MEASUREMENT,
-    ATTRIBUTION,
-    CONF_STATIONID)
-from .dgeg import DGEG, Station
+from .const import ATTRIBUTION, DEFAULT_ICON, DOMAIN, UNIT_OF_MEASUREMENT
+from .coordinator import PrecosCombustiveisCoordinator
+from .entity import PrecosCombustiveisEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-# Time between updating data from API
-SCAN_INTERVAL = timedelta(minutes=60)
 
-async def async_setup_entry(hass: HomeAssistant,
-                            config_entry: ConfigEntry,
-                            async_add_entities: AddEntitiesCallback):
-    """Setup sensor platform."""
-    session = async_get_clientsession(hass, True)
-    api = DGEG(session)
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up sensors for all stations in the city entry."""
+    coordinators: dict[str, PrecosCombustiveisCoordinator] = hass.data[DOMAIN][
+        config_entry.entry_id
+    ]
 
-    config = config_entry.data
-    station = await api.getStation(config[CONF_STATIONID])
+    sensors: list[PrecosCombustiveisSensor] = []
 
-    sensors = [PrecosCombustiveisSensor(
-        api,
-        config[CONF_STATIONID],
-        station,
-        fuel["TipoCombustivel"]
-    ) for fuel in station.fuels]
-    async_add_entities(sensors, update_before_add=True)
+    for station_id, coordinator in coordinators.items():
+        station = coordinator.data
+
+        if station is None or not station.fuels:
+            _LOGGER.warning("No fuel data for station %s", station_id)
+            continue
+
+        for fuel in station.fuels:
+            sensors.append(
+                PrecosCombustiveisSensor(
+                    coordinator=coordinator,
+                    station_id=station_id,
+                    fuel_type=fuel["TipoCombustivel"],
+                )
+            )
+
+        _LOGGER.debug(
+            "Created %d sensors for station %s (%s)",
+            len(station.fuels),
+            station_id,
+            station.name,
+        )
+
+    _LOGGER.info(
+        "Created %d total sensors for %d stations in entry %s",
+        len(sensors),
+        len(coordinators),
+        config_entry.title,
+    )
+
+    async_add_entities(sensors)
 
 
-class PrecosCombustiveisSensor(SensorEntity):
-    """Representation of a PrecosCombustiveis Sensor."""
+class PrecosCombustiveisSensor(PrecosCombustiveisEntity, SensorEntity):
+    """Sensor representing a fuel price at a gas station."""
 
-    def __init__(self, api: DGEG, stationId: float, station: Station, fuelName: str):
-        super().__init__()
-        self._api = api
-        self._stationId = stationId
-        self._station = station
-        self._fuelName = fuelName
+    _attr_device_class = SensorDeviceClass.MONETARY
+    _attr_native_unit_of_measurement = UNIT_OF_MEASUREMENT
+    _attr_icon = DEFAULT_ICON
+    _attr_attribution = ATTRIBUTION
 
-        self._icon = DEFAULT_ICON
-        self._unit_of_measurement = UNIT_OF_MEASUREMENT
-        self._device_class = SensorDeviceClass.MONETARY
-        self._state_class = SensorStateClass.MEASUREMENT
-        self._state = None
-        self._available = True
+    def __init__(
+        self,
+        coordinator: PrecosCombustiveisCoordinator,
+        station_id: str,
+        fuel_type: str,
+    ) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, station_id)
+        self._fuel_type = fuel_type
+        self._attr_unique_id = f"{DOMAIN}-{station_id}-{fuel_type}".lower()
 
     @property
     def name(self) -> str:
-        """Return the name of the entity."""
-        return f"{self._station.brand} {self._station.name} {self._fuelName}"
+        """Return the fuel type as the entity name."""
+        return self._fuel_type
 
     @property
-    def unique_id(self) -> str:
-        """Return the unique ID of the sensor."""
-        return f"{DOMAIN}-{self._stationId}-{self._fuelName}".lower()
+    def native_value(self) -> float | None:
+        """Return the current fuel price."""
+        station = self.coordinator.data
+        if station is None:
+            return None
 
-    @property
-    def available(self) -> bool:
-        """Return True if entity is available."""
-        return self._available
-
-    @property
-    def state(self) -> float:
-        return self._state
-
-    @property
-    def device_class(self):
-        return self._device_class
-
-    @property
-    def state_class(self):
-        return self._state_class
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit the value is expressed in."""
-        return self._unit_of_measurement
-
-    @property
-    def icon(self):
-        return self._icon
-
-    @property
-    def entity_picture(self):
-        """Return the entity picture."""
-        if self._station.brand and self._station.brand.lower() != "genérico":
-            brand_name = unicodedata.normalize('NFD', self._station.brand.lower())
-            brand_name =  ''.join(c for c in brand_name if c.isalpha())
-            return f"/local/precoscombustiveis/{brand_name}.png"
-        else:
-            return ""
-
-    @property
-    def attribution(self):
-        return ATTRIBUTION
-
-    @property
-    def extra_state_attributes(self) -> Dict[str, Any]:
-        """Return the state attributes."""
-        return {
-            "GasStationId": self._stationId,
-            "Brand": self._station.brand,
-            "Name": self._station.name,
-            "Address": self._station.address,
-            "Latitude": self._station.latitude,
-            "Longitude": self._station.longitude,
-            "StationType": self._station.type,
-            "LastPriceUpdate": self._station.getLastUpdate(self._fuelName),
-        }
-
-    async def async_update(self) -> None:
-        """Fetch new state data for the sensor."""
         try:
-            api = self._api
-            gasStation = await api.getStation(self._stationId)
-            if (gasStation):
-                self._state = gasStation.getPrice(self._fuelName)
-        except aiohttp.ClientError as err:
-            self._available = False
-            _LOGGER.exception("Error updating data from DGEG API. %s", err)
+            return station.getPrice(self._fuel_type)
+        except (IndexError, KeyError, ValueError):
+            _LOGGER.warning(
+                "Could not get price for %s at station %s",
+                self._fuel_type,
+                self._station_id,
+            )
+            return None
+
+    @property
+    def entity_picture(self) -> str | None:
+        """Return the brand logo as the entity picture."""
+        station = self.coordinator.data
+        if station is None or not station.brand:
+            return None
+
+        if station.brand.lower() == "genérico":
+            return None
+
+        brand_name = unicodedata.normalize("NFD", station.brand.lower())
+        brand_name = "".join(c for c in brand_name if c.isalpha())
+
+        return f"/local/precoscombustiveis/{brand_name}.png"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return additional state attributes."""
+        station = self.coordinator.data
+        if station is None:
+            return {}
+
+        return {
+            "gas_station_id": self._station_id,
+            "brand": station.brand,
+            "station_name": station.name,
+            "last_price_update": station.getLastUpdate(self._fuel_type),
+            "last_fetch_at": self.coordinator.last_fetch_at,
+        }

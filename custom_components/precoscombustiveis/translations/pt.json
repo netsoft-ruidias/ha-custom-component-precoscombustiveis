@@ -1,35 +1,54 @@
 {
-    "title": "DGEG Preços Combustiveis",
-    "config": {
-        "step": {
-            "user": {
-                "title": "Distrito",
-                "description": "Indique o distrito onde se encontra o posto de abastecimento.",
-                "data": {
-                    "distrito_select": "Distrito"
-                }
-            },
-            "station": {
-                "title": "Selecionar Posto de Abastecimento",
-                "description": "Encontrados {stations_count} postos. Por favor selecione o seu posto da lista.",
-                "data": {
-                    "station_select": "Posto de Abastecimento"
-                }
-            },
-            "confirm": {
-                "title": "Confirmar Seleção do Posto",
-                "description": "Deseja adicionar o seguinte posto?\n\nNome: {name}\nMarca: {brand}\nMorada: {address}"
-            }
-        },
-        "error": {
-            "cannot_connect": "Falha na ligação",
-            "invalid_station": "ID do posto inválido",
-            "unknown": "Erro inesperado"
-        },
-        "abort": {
-            "no_stations": "Nenhum posto encontrado. Por favor tente mais tarde.",
-            "station_not_found": "Posto selecionado não encontrado",
-            "already_configured": "Este posto já está configurado"
+  "title": "DGEG Preços Combustíveis",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Selecionar Distrito",
+        "description": "Selecione o distrito onde se encontram os postos de abastecimento.",
+        "data": {
+          "distrito_select": "Distrito"
         }
+      },
+      "localidade": {
+        "title": "Selecionar Cidade",
+        "description": "Encontrados {total_stations} postos em {distrito}.\nSelecione a cidade para criar uma integração.",
+        "data": {
+          "localidade_select": "Cidade"
+        }
+      },
+      "stations": {
+        "title": "Selecionar Postos",
+        "description": "Selecione os postos em {localidade} ({stations_count} disponíveis).\nPode selecionar vários postos.",
+        "data": {
+          "station_select": "Postos de Abastecimento"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Falha na ligação à API da DGEG",
+      "invalid_station": "ID do posto inválido",
+      "unknown": "Erro inesperado"
+    },
+    "abort": {
+      "no_stations": "Nenhum posto encontrado neste distrito.",
+      "no_stations_selected": "Nenhum posto selecionado.",
+      "station_not_found": "Posto selecionado não encontrado",
+      "already_configured": "Esta cidade já está configurada",
+      "all_cities_configured": "Todas as cidades deste distrito já estão configuradas"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Gerir Postos",
+        "description": "Gerir postos em {localidade}.\nAtualmente {current_count} de {available_count} postos selecionados.",
+        "data": {
+          "station_select": "Postos de Abastecimento"
+        }
+      }
+    },
+    "abort": {
+      "no_stations_selected": "Tem de selecionar pelo menos um posto."
+    }
+  }
 }

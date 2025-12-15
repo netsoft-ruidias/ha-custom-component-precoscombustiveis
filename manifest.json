@@ -1,9 +1,0 @@
-{
-  "domain": "precoscombustiveis",
-  "name": "Preços dos Combustíveis - DGEG",
-  "version": "3.0.0",
-  "requirements": [],
-  "codeowners": ["@netsoft-ruidias"],
-  "config_flow": true,
-  "iot_class": "cloud_polling"
-}

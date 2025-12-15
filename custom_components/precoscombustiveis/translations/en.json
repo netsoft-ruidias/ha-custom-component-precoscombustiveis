@@ -1,35 +1,54 @@
 {
-    "title": "DGEG.PT Precos Combustiveis",
-    "config": {
-        "step": {
-            "user": {
-                "title": "Select Your Location",
-                "description": "Select the primary location for your gas station.",
-                "data": {
-                    "distrito_select": "Location"
-                }
-            },
-            "station": {
-                "title": "Select Gas Station",
-                "description": "Found {stations_count} stations. Please select your station from the list.",
-                "data": {
-                    "station_select": "Gas Station"
-                }
-            },
-            "confirm": {
-                "title": "Confirm Station Selection",
-                "description": "Do you want to add the following station?\n\nName: {name}\nBrand: {brand}\nAddress: {address}"
-            }
-        },
-        "error": {
-            "cannot_connect": "Failed to connect",
-            "invalid_station": "Invalid station ID",
-            "unknown": "Unexpected error"
-        },
-        "abort": {
-            "no_stations": "No stations found. Please try again later.",
-            "station_not_found": "Selected station not found",
-            "already_configured": "This station is already configured"
+  "title": "DGEG Fuel Prices",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select District",
+        "description": "Select the district where the gas stations are located.",
+        "data": {
+          "distrito_select": "District"
         }
+      },
+      "localidade": {
+        "title": "Select City",
+        "description": "Found {total_stations} stations in {distrito}.\nSelect the city to create an integration entry.",
+        "data": {
+          "localidade_select": "City"
+        }
+      },
+      "stations": {
+        "title": "Select Gas Stations",
+        "description": "Select the gas stations in {localidade} ({stations_count} available).\nYou can select multiple stations.",
+        "data": {
+          "station_select": "Gas Stations"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to DGEG API",
+      "invalid_station": "Invalid station ID",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "no_stations": "No stations found in this district.",
+      "no_stations_selected": "No stations selected.",
+      "station_not_found": "Selected station not found",
+      "already_configured": "This city is already configured",
+      "all_cities_configured": "All cities in this district are already configured"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Manage Stations",
+        "description": "Manage gas stations in {localidade}.\nCurrently {current_count} of {available_count} stations selected.",
+        "data": {
+          "station_select": "Gas Stations"
+        }
+      }
+    },
+    "abort": {
+      "no_stations_selected": "You must select at least one station."
+    }
+  }
 }
