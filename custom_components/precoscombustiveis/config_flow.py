@@ -36,8 +36,10 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self):
         """Initialize flow."""
         self._stations: list = []
+        self._municipio_stations: list = []
         self._filtered_stations: list = []
         self._selected_station: Dict[str, Any] = {}
+        self._selected_municipio: str = ""
         self._selected_brand: str = ""
         self._distrito_id: int = 0
 
@@ -58,35 +60,80 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 })
             )
 
-        # Store selected distrito and move to station selection
+        # Store selected distrito and fetch stations once
         self._distrito_id = int(user_input["distrito_select"])
+        session = async_get_clientsession(self.hass)
+        api = DGEG(session)
+        self._stations = await api.list_stations(self._distrito_id)
+
+        if not self._stations:
+            return self.async_abort(reason="no_stations")
+
+        return await self.async_step_municipio()
+
+    async def async_step_municipio(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> Any:
+        """Handle municipio selection for selected distrito."""
+        if user_input is None:
+            if not self._stations:
+                return self.async_abort(reason="no_stations")
+
+            municipios = sorted(
+                {
+                    str(station["Municipio"]).strip()
+                    for station in self._stations
+                    if station.get("Municipio") and str(station["Municipio"]).strip()
+                },
+                key=str.casefold,
+            )
+
+            if not municipios:
+                return self.async_abort(reason="no_stations")
+
+            return self.async_show_form(
+                step_id="municipio",
+                data_schema=vol.Schema({
+                    vol.Required("municipio_select"): vol.In(municipios)
+                }),
+                description_placeholders={
+                    "municipios_count": str(len(municipios)),
+                    "distrito": DISTRITOS[self._distrito_id],
+                },
+            )
+
+        self._selected_municipio = user_input["municipio_select"]
+        self._municipio_stations = [
+            station
+            for station in self._stations
+            if str(station.get("Municipio", "")).strip() == self._selected_municipio
+        ]
+
+        if not self._municipio_stations:
+            return self.async_abort(reason="no_stations")
+
         return await self.async_step_brand()
 
     async def async_step_brand(
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> Any:
-        """Handle brand selection for selected distrito."""
+        """Handle brand selection for selected municipio."""
         if user_input is None:
-            # Fetch stations list once and reuse it in the next steps
-            session = async_get_clientsession(self.hass)
-            api = DGEG(session)
-            self._stations = await api.list_stations(self._distrito_id)
-
-            if not self._stations:
+            if not self._municipio_stations:
                 return self.async_abort(reason="no_stations")
 
             # Build sorted unique brands list
             brands = sorted(
                 {
                     station["Marca"].strip()
-                    for station in self._stations
+                    for station in self._municipio_stations
                     if station.get("Marca") and str(station["Marca"]).strip()
                 },
                 key=str.casefold,
             )
 
             if not brands:
-                return self.async_abort(reason="no_stations")
+                return self.async_abort(reason="no_brands")
 
             return self.async_show_form(
                 step_id="brand",
@@ -95,14 +142,15 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }),
                 description_placeholders={
                     "brands_count": str(len(brands)),
-                    "distrito": DISTRITOS[self._distrito_id]
+                    "distrito": DISTRITOS[self._distrito_id],
+                    "municipio": self._selected_municipio,
                 }
             )
 
         self._selected_brand = user_input["brand_select"]
         self._filtered_stations = [
             station
-            for station in self._stations
+            for station in self._municipio_stations
             if str(station.get("Marca", "")).strip() == self._selected_brand
         ]
 
@@ -122,9 +170,12 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             # Create filtered selection list for selected brand
             stations_list = {
                 str(station["Id"]): (
-                    f"[{station['Municipio']}] {station['Nome']}"
-                    if station["Municipio"] == station["Localidade"]
-                    else f"[{station['Municipio']} - {station['Localidade']}] {station['Nome']}"
+                    f"{station['Nome']}"
+                    if (
+                        station["Municipio"] == station["Localidade"]
+                        or str(station["Localidade"]).casefold() in str(station["Nome"]).casefold()
+                    )
+                    else f"[{station['Localidade']}] {station['Nome']}"
                 )
                 for station in self._filtered_stations
             }
@@ -135,8 +186,9 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required("station_select"): vol.In(stations_list)
                 }),
                 description_placeholders={
-                    "stations_count": str(len(self._filtered_stations)),
+                    "stations_count": str(len(stations_list)),
                     "distrito": DISTRITOS[self._distrito_id],
+                    "municipio": self._selected_municipio,
                     "brand": self._selected_brand,
                 }
             )
@@ -155,7 +207,9 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_STATIONID: str(selected_station["Id"]),
             CONF_STATION_NAME: selected_station["Nome"],
             CONF_STATION_BRAND: selected_station["Marca"],
-            CONF_STATION_ADDRESS: selected_station["Morada"],
+            CONF_STATION_ADDRESS: selected_station["Morada"]
+                if selected_station["Localidade"] == self._selected_municipio
+                else f"{selected_station['Morada']} - {selected_station['Localidade']}",
         }
 
         return await self.async_step_confirm()
@@ -171,6 +225,8 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     "name": self._selected_station[CONF_STATION_NAME],
                     "brand": self._selected_station[CONF_STATION_BRAND],
                     "address": self._selected_station[CONF_STATION_ADDRESS],
+                    "distrito": DISTRITOS[self._distrito_id],
+                    "municipio": self._selected_municipio,
                 }
             )
 

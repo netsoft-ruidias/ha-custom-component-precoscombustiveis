@@ -9,23 +9,30 @@
                     "distrito_select": "Distrito"
                 }
             },
+            "municipio": {
+                "title": "Selecionar Municipio",
+                "description": "Encontrados {municipios_count} municipios em {distrito}. Por favor selecione o municipio.",
+                "data": {
+                    "municipio_select": "Municipio"
+                }
+            },
             "brand": {
                 "title": "Selecionar Marca",
-                "description": "Encontradas {brands_count} marcas em {distrito}. Por favor selecione a marca.",
+                "description": "Encontradas {brands_count} marcas em {municipio}, {distrito}. Por favor selecione a marca.",
                 "data": {
                     "brand_select": "Marca"
                 }
             },
             "station": {
                 "title": "Selecionar Posto de Abastecimento",
-                "description": "Encontrados {stations_count} postos da marca {brand} em {distrito}. Por favor selecione o seu posto da lista.",
+                "description": "Encontrados {stations_count} postos da marca {brand} em {municipio}, {distrito}. Por favor selecione o seu posto da lista.",
                 "data": {
                     "station_select": "Posto de Abastecimento"
                 }
             },
             "confirm": {
                 "title": "Confirmar Seleção do Posto",
-                "description": "Deseja adicionar o seguinte posto?\n\nNome: {name}\nMarca: {brand}\nMorada: {address}"
+                "description": "Deseja adicionar o seguinte posto?\n\n- **{name}**\n{brand}\n___\n{address}\n{municipio}\n{distrito}"
             }
         },
         "error": {
@@ -35,6 +42,7 @@
         },
         "abort": {
             "no_stations": "Nenhum posto encontrado. Por favor tente mais tarde.",
+            "no_brands": "Nao foram encontradas marcas para o municipio selecionado.",
             "station_not_found": "Posto selecionado não encontrado",
             "already_configured": "Este posto já está configurado"
         }
