@@ -97,6 +97,7 @@ class PrecosCombustiveisSensor(SensorEntity):
             "Latitude": station.latitude,
             "Longitude": station.longitude,
             "StationType": station.type,
+            "FuelName": self._fuel_name,
             "LastPriceUpdate": station.getLastUpdate(self._fuel_name),
         }
 

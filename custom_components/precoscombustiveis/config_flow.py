@@ -33,6 +33,15 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
+    @classmethod
+    def async_supports_options_flow(cls, config_entry):
+        """Return options flow support for this config entry."""
+        return False
+
+    def is_matching(self, other_flow):
+        """Return True if the config matches the integration."""
+        return False
+
     def __init__(self):
         """Initialize flow."""
         self._stations: list = []
