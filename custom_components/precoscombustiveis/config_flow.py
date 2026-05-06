@@ -36,7 +36,9 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self):
         """Initialize flow."""
         self._stations: list = []
+        self._filtered_stations: list = []
         self._selected_station: Dict[str, Any] = {}
+        self._selected_brand: str = ""
         self._distrito_id: int = 0
 
     async def async_step_user(
@@ -58,14 +60,14 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # Store selected distrito and move to station selection
         self._distrito_id = int(user_input["distrito_select"])
-        return await self.async_step_station()
+        return await self.async_step_brand()
 
-    async def async_step_station(
+    async def async_step_brand(
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> Any:
-        """Handle station selection."""
+        """Handle brand selection for selected distrito."""
         if user_input is None:
-            # Fetch stations list for selected distrito
+            # Fetch stations list once and reuse it in the next steps
             session = async_get_clientsession(self.hass)
             api = DGEG(session)
             self._stations = await api.list_stations(self._distrito_id)
@@ -73,10 +75,58 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not self._stations:
                 return self.async_abort(reason="no_stations")
 
-            # Create selection list
+            # Build sorted unique brands list
+            brands = sorted(
+                {
+                    station["Marca"].strip()
+                    for station in self._stations
+                    if station.get("Marca") and str(station["Marca"]).strip()
+                },
+                key=str.casefold,
+            )
+
+            if not brands:
+                return self.async_abort(reason="no_stations")
+
+            return self.async_show_form(
+                step_id="brand",
+                data_schema=vol.Schema({
+                    vol.Required("brand_select"): vol.In(brands)
+                }),
+                description_placeholders={
+                    "brands_count": str(len(brands)),
+                    "distrito": DISTRITOS[self._distrito_id]
+                }
+            )
+
+        self._selected_brand = user_input["brand_select"]
+        self._filtered_stations = [
+            station
+            for station in self._stations
+            if str(station.get("Marca", "")).strip() == self._selected_brand
+        ]
+
+        if not self._filtered_stations:
+            return self.async_abort(reason="no_stations")
+
+        return await self.async_step_station()
+
+    async def async_step_station(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> Any:
+        """Handle station selection."""
+        if user_input is None:
+            if not self._filtered_stations:
+                return self.async_abort(reason="no_stations")
+
+            # Create filtered selection list for selected brand
             stations_list = {
-                str(station["Id"]): f"{station['Localidade']}: {station['Marca']} - {station['Nome']}"
-                for station in self._stations
+                str(station["Id"]): (
+                    f"[{station['Municipio']}] {station['Nome']}"
+                    if station["Municipio"] == station["Localidade"]
+                    else f"[{station['Municipio']} - {station['Localidade']}] {station['Nome']}"
+                )
+                for station in self._filtered_stations
             }
 
             return self.async_show_form(
@@ -85,15 +135,16 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required("station_select"): vol.In(stations_list)
                 }),
                 description_placeholders={
-                    "stations_count": str(len(self._stations)),
-                    "distrito": DISTRITOS[self._distrito_id]
+                    "stations_count": str(len(self._filtered_stations)),
+                    "distrito": DISTRITOS[self._distrito_id],
+                    "brand": self._selected_brand,
                 }
             )
 
         # Store selected station details
         station_id = user_input["station_select"]
         selected_station = next(
-            (station for station in self._stations if str(station["Id"]) == station_id),
+            (station for station in self._filtered_stations if str(station["Id"]) == station_id),
             None
         )
 

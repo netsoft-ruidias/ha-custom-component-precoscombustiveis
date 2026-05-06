@@ -116,6 +116,7 @@ class DGEG:
                     return sorted(
                         json.get('resultado') or [],
                         key=lambda x: (
+                            _safe_lower(x.get('Municipio')),
                             _safe_lower(x.get('Localidade')),
                             _safe_lower(x.get('Marca')),
                             _safe_lower(x.get('Nome'))

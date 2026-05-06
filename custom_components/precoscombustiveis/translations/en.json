@@ -9,9 +9,16 @@
                     "distrito_select": "Location"
                 }
             },
+            "brand": {
+                "title": "Select Brand",
+                "description": "Found {brands_count} brands in {distrito}. Please select a brand.",
+                "data": {
+                    "brand_select": "Brand"
+                }
+            },
             "station": {
                 "title": "Select Gas Station",
-                "description": "Found {stations_count} stations. Please select your station from the list.",
+                "description": "Found {stations_count} stations for {brand} in {distrito}. Please select your station from the list.",
                 "data": {
                     "station_select": "Gas Station"
                 }
