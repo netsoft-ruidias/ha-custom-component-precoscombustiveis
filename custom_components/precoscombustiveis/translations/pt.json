@@ -30,21 +30,48 @@
                     "station_select": "Posto de Abastecimento"
                 }
             },
+            "fuel_types": {
+                "title": "Selecionar Tipos de Combustivel",
+                "description": "Escolha quais os tipos de combustivel que pretende monitorizar para {station_name} ({brand}). {fuels_count} tipos disponiveis.",
+                "data": {
+                    "fuel_types_select": "Tipos de Combustivel"
+                }
+            },
             "confirm": {
                 "title": "Confirmar Seleção do Posto",
-                "description": "Deseja adicionar o seguinte posto?\n\n- **{name}**\n{brand}\n___\n{address}\n{municipio}\n{distrito}"
+                "description": "Deseja adicionar o seguinte posto?\n\n- **{name}**\n{brand}\n___\n{address}\n{municipio}\n{distrito}\n___\n**Combustíveis:** {fuel_types}"
             }
         },
         "error": {
             "cannot_connect": "Falha na ligação",
             "invalid_station": "ID do posto inválido",
-            "unknown": "Erro inesperado"
+            "unknown": "Erro inesperado",
+            "no_fuel_selected": "Tem de selecionar pelo menos um tipo de combustivel."
         },
         "abort": {
             "no_stations": "Nenhum posto encontrado. Por favor tente mais tarde.",
             "no_brands": "Nao foram encontradas marcas para o municipio selecionado.",
             "station_not_found": "Posto selecionado não encontrado",
-            "already_configured": "Este posto já está configurado"
+            "no_fuels": "Nenhum tipo de combustível encontrado para este posto.",
+            "already_configured": "Este posto já está configurado",
+            "options_updated": "Tipos de combustivel atualizados com sucesso"
+        }
+    },
+    "options": {
+        "step": {
+            "fuel_types": {
+                "title": "Tipos de Combustivel",
+                "description": "Selecione quais os tipos de combustivel que pretende monitorizar para {station_name} ({brand}). {fuels_count} tipos disponiveis.",
+                "data": {
+                    "fuel_types_select": "Tipos de Combustivel"
+                }
+            }
+        },
+        "error": {
+            "no_fuel_selected": "Tem de selecionar pelo menos um tipo de combustivel."
+        },
+        "abort": {
+            "options_updated": "Tipos de combustivel atualizados com sucesso"
         }
     }
 }

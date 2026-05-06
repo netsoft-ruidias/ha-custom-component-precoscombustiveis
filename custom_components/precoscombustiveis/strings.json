@@ -30,21 +30,48 @@
                     "station_select": "Gas Station"
                 }
             },
+            "fuel_types": {
+                "title": "Select Fuel Types",
+                "description": "Choose which fuel types you want to monitor for {station_name} ({brand}). {fuels_count} types available.",
+                "data": {
+                    "fuel_types_select": "Fuel Types"
+                }
+            },
             "confirm": {
                 "title": "Confirm Station Selection",
-                "description": "Do you want to add the following station?\n\n- **{name}**\n{brand}\n___\n{address}\n{municipio}\n{distrito}"
+                "description": "Do you want to add the following station?\n\n- **{name}**\n{brand}\n___\n{address}\n{municipio}\n{distrito}\n___\n**Fuel Types:** {fuel_types}"
             }
         },
         "error": {
             "cannot_connect": "Failed to connect",
             "invalid_station": "Invalid station ID",
-            "unknown": "Unexpected error"
+            "unknown": "Unexpected error",
+            "no_fuel_selected": "You must select at least one fuel type."
         },
         "abort": {
             "no_stations": "No stations found. Please try again later.",
             "no_brands": "No brands found for the selected municipality.",
             "station_not_found": "Selected station not found",
-            "already_configured": "This station is already configured"
+            "no_fuels": "No fuel types found for this station.",
+            "already_configured": "This station is already configured",
+            "options_updated": "Fuel types updated successfully"
+        }
+    },
+    "options": {
+        "step": {
+            "fuel_types": {
+                "title": "Fuel Types",
+                "description": "Select which fuel types you want to monitor for {station_name} ({brand}). {fuels_count} types available.",
+                "data": {
+                    "fuel_types_select": "Fuel Types"
+                }
+            }
+        },
+        "error": {
+            "no_fuel_selected": "You must select at least one fuel type."
+        },
+        "abort": {
+            "options_updated": "Fuel types updated successfully"
         }
     }
 }

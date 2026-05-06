@@ -5,7 +5,9 @@ import logging
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers import config_validation as cv
 
 from .const import (
     DOMAIN,
@@ -13,6 +15,7 @@ from .const import (
     CONF_STATION_NAME,
     CONF_STATION_BRAND,
     CONF_STATION_ADDRESS,
+    CONF_FUEL_TYPES,
     DISTRITOS
 )
 from .dgeg import DGEG
@@ -26,7 +29,6 @@ DATA_SCHEMA = vol.Schema(
     }
 )
 
-
 class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """PrecosCombustiveis config flow."""
 
@@ -36,10 +38,24 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @classmethod
     def async_supports_options_flow(cls, config_entry):
         """Return options flow support for this config entry."""
-        return False
+        return True
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry):
+        """Return the options flow for this handler."""
+        return PrecosCombustiveisOptionsFlow()
 
     def is_matching(self, other_flow):
         """Return True if the config matches the integration."""
+        # Prevent duplicate entries for the same station
+        if self.context.get("source") == config_entries.SOURCE_USER:
+            # Check if another flow is already configuring the same station
+            return (
+                other_flow.context.get("source") == config_entries.SOURCE_USER
+                and other_flow.init_data.get(CONF_STATIONID)
+                == self.context.get(CONF_STATIONID)
+            )
         return False
 
     def __init__(self):
@@ -50,6 +66,7 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._selected_station: Dict[str, Any] = {}
         self._selected_municipio: str = ""
         self._selected_brand: str = ""
+        self._selected_fuel_types: list = []
         self._distrito_id: int = 0
 
     async def async_step_user(
@@ -221,6 +238,53 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 else f"{selected_station['Morada']} - {selected_station['Localidade']}",
         }
 
+        return await self.async_step_fuel_types()
+
+    async def async_step_fuel_types(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> Any:
+        """Handle fuel types selection."""
+        if user_input is None:
+            # Get available fuel types from the selected station
+            session = async_get_clientsession(self.hass)
+            api = DGEG(session)
+            station = await api.get_station(int(self._selected_station[CONF_STATIONID]))
+
+            fuel_types = [fuel["TipoCombustivel"] for fuel in station.fuels]
+
+            if not fuel_types:
+                return self.async_abort(reason="no_fuels")
+
+            # Create checkboxes for fuel types
+            return self.async_show_form(
+                step_id="fuel_types",
+                data_schema=vol.Schema({
+                    vol.Required("fuel_types_select"): cv.multi_select(fuel_types)
+                }),
+                description_placeholders={
+                    "station_name": self._selected_station[CONF_STATION_NAME],
+                    "brand": self._selected_station[CONF_STATION_BRAND],
+                    "fuels_count": str(len(fuel_types)),
+                },
+            )
+
+        # Validate that at least one fuel type is selected
+        selected_fuels = user_input.get("fuel_types_select", [])
+        if not selected_fuels:
+            session = async_get_clientsession(self.hass)
+            api = DGEG(session)
+            station = await api.get_station(int(self._selected_station[CONF_STATIONID]))
+            fuel_types = [fuel["TipoCombustivel"] for fuel in station.fuels]
+
+            return self.async_show_form(
+                step_id="fuel_types",
+                data_schema=vol.Schema({
+                    vol.Required("fuel_types_select"): cv.multi_select(fuel_types)
+                }),
+                errors={"base": "no_fuel_selected"},
+            )
+
+        self._selected_fuel_types = selected_fuels
         return await self.async_step_confirm()
 
     async def async_step_confirm(
@@ -228,6 +292,9 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> Any:
         """Confirm the station selection."""
         if user_input is None:
+            # Format selected fuel types as comma-separated string
+            fuel_types_str = ", ".join(self._selected_fuel_types)
+            
             return self.async_show_form(
                 step_id="confirm",
                 description_placeholders={
@@ -236,8 +303,12 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     "address": self._selected_station[CONF_STATION_ADDRESS],
                     "distrito": DISTRITOS[self._distrito_id],
                     "municipio": self._selected_municipio,
+                    "fuel_types": fuel_types_str,
                 }
             )
+
+        # Store selected fuel types
+        self._selected_station[CONF_FUEL_TYPES] = self._selected_fuel_types
 
         # Ensure each station has its own unique config entry (and therefore a device)
         await self.async_set_unique_id(str(self._selected_station[CONF_STATIONID]))
@@ -248,3 +319,80 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             title=f"{self._selected_station[CONF_STATION_NAME]} - {self._selected_station[CONF_STATION_BRAND]}",
             data=self._selected_station,
         )
+
+class PrecosCombustiveisOptionsFlow(config_entries.OptionsFlow):
+    """Options flow for PrecosCombustiveis integration."""
+
+    async def async_step_init(self, user_input: Optional[Dict[str, Any]] = None) -> Any:
+        """Handle options flow initial step."""
+        # Redirect to fuel_types step
+        return await self.async_step_fuel_types(user_input)
+
+    async def async_step_fuel_types(self, user_input: Optional[Dict[str, Any]] = None) -> Any:
+        """Handle fuel types selection."""
+        if user_input is None:
+            # Initialize instance variables
+            current_fuel_types = self.config_entry.data.get(CONF_FUEL_TYPES, [])
+            
+            # Get available fuel types from the station
+            session = async_get_clientsession(self.hass)
+            api = DGEG(session)
+            station_id = self.config_entry.data[CONF_STATIONID]
+            station = await api.get_station(int(station_id))
+
+            available_fuel_types = [fuel["TipoCombustivel"] for fuel in station.fuels]
+
+            if not available_fuel_types:
+                return self.async_abort(reason="no_fuels")
+
+            # Create multi-select for fuel types with currently selected ones as defaults
+            return self.async_show_form(
+                step_id="fuel_types",
+                data_schema=vol.Schema({
+                    vol.Required(
+                        "fuel_types_select",
+                        default=current_fuel_types
+                    ): cv.multi_select(available_fuel_types)
+                }),
+                description_placeholders={
+                    "station_name": self.config_entry.data[CONF_STATION_NAME],
+                    "brand": self.config_entry.data[CONF_STATION_BRAND],
+                    "fuels_count": str(len(available_fuel_types)),
+                },
+            )
+
+        # Validate that at least one fuel type is selected
+        selected_fuels = user_input.get("fuel_types_select", [])
+        if not selected_fuels:
+            # Re-fetch data if validation fails
+            current_fuel_types = self.config_entry.data.get(CONF_FUEL_TYPES, [])
+            session = async_get_clientsession(self.hass)
+            api = DGEG(session)
+            station_id = self.config_entry.data[CONF_STATIONID]
+            station = await api.get_station(int(station_id))
+            available_fuel_types = [fuel["TipoCombustivel"] for fuel in station.fuels]
+            
+            return self.async_show_form(
+                step_id="fuel_types",
+                data_schema=vol.Schema({
+                    vol.Required(
+                        "fuel_types_select",
+                        default=current_fuel_types
+                    ): cv.multi_select(available_fuel_types)
+                }),
+                errors={"base": "no_fuel_selected"},
+            )
+
+        # Update the config entry data with new fuel types
+        new_data = self.config_entry.data.copy()
+        new_data[CONF_FUEL_TYPES] = selected_fuels
+
+        self.hass.config_entries.async_update_entry(
+            self.config_entry,
+            data=new_data,
+        )
+
+        # Reload the config entry to apply changes
+        await self.hass.config_entries.async_reload(self.config_entry.entry_id)
+
+        return self.async_abort(reason="options_updated")

@@ -20,7 +20,8 @@ from .const import (
     DOMAIN,
     UNIT_OF_MEASUREMENT,
     ATTRIBUTION,
-    CONF_STATIONID)
+    CONF_STATIONID,
+    CONF_FUEL_TYPES)
 from .dgeg import DGEG, Station
 
 logger = logging.getLogger(__name__)
@@ -39,12 +40,18 @@ async def async_setup_entry(hass: HomeAssistant,
     config = config_entry.data
     station = await api.get_station(config[CONF_STATIONID])
 
+    # Get selected fuel types from config (with fallback for backward compatibility)
+    selected_fuel_types = config.get(
+        CONF_FUEL_TYPES,
+        [fuel["TipoCombustivel"] for fuel in station.fuels]
+    )
+
     sensors = [PrecosCombustiveisSensor(
         api,
         config[CONF_STATIONID],
         station,
         fuel["TipoCombustivel"]
-    ) for fuel in station.fuels]
+    ) for fuel in station.fuels if fuel["TipoCombustivel"] in selected_fuel_types]
     async_add_entities(sensors, update_before_add=True)
 
 

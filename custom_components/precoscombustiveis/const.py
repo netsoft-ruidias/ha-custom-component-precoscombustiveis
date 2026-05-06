@@ -10,6 +10,7 @@ DEFAULT_ICON = "mdi:gas-station"
 UNIT_OF_MEASUREMENT = "€"
 
 CONF_STATIONID = "stationId"
+CONF_FUEL_TYPES = "fuel_types"
 
 CONF_STATION_NAME = "station_name"
 CONF_STATION_BRAND = "station_brand"
