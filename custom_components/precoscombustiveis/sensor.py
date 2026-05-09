@@ -73,7 +73,7 @@ class PrecosCombustiveisSensor(SensorEntity):
         self._attr_icon = DEFAULT_ICON
         self._attr_native_unit_of_measurement = UNIT_OF_MEASUREMENT
         self._attr_device_class = SensorDeviceClass.MONETARY
-        self._attr_state_class = SensorStateClass.TOTAL
+        self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_attribution = ATTRIBUTION
         self._attr_entity_picture = self._get_entity_picture(self._station)
         self._attr_extra_state_attributes = self._build_extra_state_attributes(
@@ -105,7 +105,7 @@ class PrecosCombustiveisSensor(SensorEntity):
             "Longitude": station.longitude,
             "StationType": station.type,
             "FuelName": self._fuel_name,
-            "LastPriceUpdate": station.getLastUpdate(self._fuel_name),
+            "LastPriceUpdate": station.get_last_update(self._fuel_name),
         }
 
     async def async_update(self) -> None:
@@ -114,7 +114,7 @@ class PrecosCombustiveisSensor(SensorEntity):
             api = self._api
             gas_station = await api.get_station(self._station_id)
             if gas_station:
-                self._attr_native_value = gas_station.getPrice(self._fuel_name)
+                self._attr_native_value = gas_station.get_price(self._fuel_name)
                 self._attr_available = True
         except aiohttp.ClientError as err:
             self._attr_available = False

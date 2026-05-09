@@ -25,8 +25,8 @@ async def main():
             print ("GPS..............:", station.latitude, station.longitude)
             print ("Station Type.....:", station.type)
             print (station.fuels)
-            print ("Gasóleo simples..:", station.getPrice("Gasóleo simples"), "€", "(", station.getLastUpdate("Gasóleo simples"), ")")
-            print ("Gasóleo especial.:", station.getPrice("Gasóleo especial"), "€", "(", station.getLastUpdate("Gasóleo especial"), ")")
+            print ("Gasóleo simples..:", station.get_price("Gasóleo simples"), "€", "(", station.get_last_update("Gasóleo simples"), ")")
+            print ("Gasóleo especial.:", station.get_price("Gasóleo especial"), "€", "(", station.get_last_update("Gasóleo especial"), ")")
         else:
             print ("Gas Station not found!")
 

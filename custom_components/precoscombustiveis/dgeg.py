@@ -67,19 +67,19 @@ class Station:
         """Return the station FUELS."""
         return self._data["Combustiveis"]
 
-    def getLastUpdate(self, fuelType) -> datetime | None:
+    def get_last_update(self, fuel_type) -> datetime | None:
         """Return the station LAST UPDATE for a given fuel type."""
-        fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuelType][0]
-        if (fuel):
+        fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuel_type][0]
+        if fuel and fuel.get("DataAtualizacao"):
             return datetime.strptime(
                 fuel["DataAtualizacao"],
                 '%Y-%m-%d %H:%M')
         return None
 
-    def getPrice(self, fuelType) -> float:
+    def get_price(self, fuel_type) -> float:
         """Return the station PRICE for a given fuel type."""
-        fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuelType][0]
-        if (fuel):               
+        fuel = [f for f in self._data["Combustiveis"] if f["TipoCombustivel"] == fuel_type][0]
+        if fuel and fuel.get("Preco"):               
             return float(fuel["Preco"]
                 .replace(" €/litro", "")
                 .replace(",", "."))
