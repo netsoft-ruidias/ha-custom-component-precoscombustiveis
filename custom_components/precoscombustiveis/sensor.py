@@ -3,17 +3,15 @@ from __future__ import annotations
 
 import logging
 import unicodedata
-from datetime import timedelta
-from typing import Any, Dict
 
-import aiohttp
+
 from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
                                              SensorStateClass)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
     DEFAULT_ICON,
@@ -22,70 +20,61 @@ from .const import (
     ATTRIBUTION,
     CONF_STATIONID,
     CONF_FUEL_TYPES)
-from .dgeg import DGEG, Station
+from .coordinator import PrecosCombustiveisCoordinator
+from .dgeg import Station
 
 logger = logging.getLogger(__name__)
 logger.level = logging.INFO
 
-# Time between updating data from API
-SCAN_INTERVAL = timedelta(minutes=60)
 
 async def async_setup_entry(hass: HomeAssistant,
                             config_entry: ConfigEntry,
                             async_add_entities: AddEntitiesCallback):
     """Setup sensor platform."""
-    session = async_get_clientsession(hass, True)
-    api = DGEG(session)
-
-    config = config_entry.data
-    station = await api.get_station(config[CONF_STATIONID])
+    coordinator: PrecosCombustiveisCoordinator = hass.data[DOMAIN][config_entry.entry_id]
+    station = coordinator.data
 
     # Get selected fuel types from config (with fallback for backward compatibility)
-    selected_fuel_types = config.get(
+    selected_fuel_types = config_entry.data.get(
         CONF_FUEL_TYPES,
         [fuel["TipoCombustivel"] for fuel in station.fuels]
     )
 
-    sensors = [PrecosCombustiveisSensor(
-        api,
-        config[CONF_STATIONID],
-        station,
-        fuel["TipoCombustivel"]
-    ) for fuel in station.fuels if fuel["TipoCombustivel"] in selected_fuel_types]
-    async_add_entities(sensors, update_before_add=True)
+    sensors = [
+        PrecosCombustiveisSensor(coordinator, config_entry.data[CONF_STATIONID], fuel["TipoCombustivel"])
+        for fuel in station.fuels
+        if fuel["TipoCombustivel"] in selected_fuel_types
+    ]
+    async_add_entities(sensors)
 
 
-class PrecosCombustiveisSensor(SensorEntity):
+class PrecosCombustiveisSensor(CoordinatorEntity[PrecosCombustiveisCoordinator], SensorEntity):  # type: ignore[misc]
     """Representation of a PrecosCombustiveis Sensor."""
 
-    def __init__(self, api: DGEG, station_id: int, station: Station, fuel_name: str):
-        super().__init__()
-        self._api = api
+    def __init__(self, coordinator: PrecosCombustiveisCoordinator, station_id: int, fuel_name: str):
+        super().__init__(coordinator)
         self._station_id = station_id
-        self._station = station
         self._fuel_name = fuel_name
 
-        # Provide name and unique_id via HA entity attributes to avoid overriding cached_property
+        station = coordinator.data
         self._attr_unique_id = f"{DOMAIN}-{self._station_id}-{self._fuel_name}".lower()
-        self._attr_name = f"{self._station.brand} {self._station.name} {self._fuel_name}"
-        self._attr_available = True
-        self._attr_native_value = None
+        self._attr_name = f"{station.brand} {station.name} {self._fuel_name}"
         self._attr_icon = DEFAULT_ICON
         self._attr_native_unit_of_measurement = UNIT_OF_MEASUREMENT
         self._attr_device_class = SensorDeviceClass.MONETARY
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_attribution = ATTRIBUTION
-        self._attr_entity_picture = self._get_entity_picture(self._station)
-        self._attr_extra_state_attributes = self._build_extra_state_attributes(
-            self._station
-        )
+        self._attr_entity_picture = self._get_entity_picture(station)
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, str(self._station_id))},
-            name=self._station.name,
-            model=self._station.brand,
+            name=station.name,
+            model=station.brand,
             manufacturer="DGEG",
         )
+
+        # Set initial dynamic attribute values
+        self._update_from_station(station)
 
     def _get_entity_picture(self, station: Station) -> str | None:
         brand = station.brand
@@ -95,8 +84,10 @@ class PrecosCombustiveisSensor(SensorEntity):
             return f"/local/precoscombustiveis/{brand_name}.png"
         return None
 
-    def _build_extra_state_attributes(self, station: Station) -> Dict[str, Any]:
-        return {
+    def _update_from_station(self, station: Station) -> None:
+        """Update dynamic attributes from station data."""
+        self._attr_native_value = station.get_price(self._fuel_name)
+        self._attr_extra_state_attributes = {
             "GasStationId": self._station_id,
             "Brand": station.brand,
             "Name": station.name,
@@ -108,14 +99,8 @@ class PrecosCombustiveisSensor(SensorEntity):
             "LastPriceUpdate": station.get_last_update(self._fuel_name),
         }
 
-    async def async_update(self) -> None:
-        """Fetch new state data for the sensor."""
-        try:
-            api = self._api
-            gas_station = await api.get_station(self._station_id)
-            if gas_station:
-                self._attr_native_value = gas_station.get_price(self._fuel_name)
-                self._attr_available = True
-        except aiohttp.ClientError as err:
-            self._attr_available = False
-            logger.exception("Error updating data from DGEG API. %s", err)
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self._update_from_station(self.coordinator.data)
+        self.async_write_ha_state()
+

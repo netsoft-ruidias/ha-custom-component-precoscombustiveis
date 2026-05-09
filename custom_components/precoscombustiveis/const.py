@@ -16,10 +16,10 @@ CONF_STATION_NAME = "station_name"
 CONF_STATION_BRAND = "station_brand"
 CONF_STATION_ADDRESS = "station_address"
 
-# API endpoints 
-API_ENDPOINT = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/"
-API_STATIONS_LIST = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PesquisarPostos?idDistrito={}&qtdPorPagina=99999&pagina=1"
-API_URI_TEMPLATE = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/GetDadosPosto?id={}"
+# API endpoints
+API_ENDPOINT = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb"
+API_STATIONS_LIST = f"{API_ENDPOINT}/PesquisarPostos?idDistrito={{}}&qtdPorPagina=99999&pagina=1"
+API_URI_TEMPLATE = f"{API_ENDPOINT}/GetDadosPosto?id={{}}"
 
 DISTRITOS = {
     1: "Aveiro",
