@@ -5,8 +5,7 @@ import logging
 import unicodedata
 
 
-from homeassistant.components.sensor import (SensorDeviceClass, SensorEntity,
-                                             SensorStateClass)
+from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -61,7 +60,6 @@ class PrecosCombustiveisSensor(CoordinatorEntity[PrecosCombustiveisCoordinator],
         self._attr_name = f"{station.brand} {station.name} {self._fuel_name}"
         self._attr_icon = DEFAULT_ICON
         self._attr_native_unit_of_measurement = UNIT_OF_MEASUREMENT
-        self._attr_device_class = SensorDeviceClass.MONETARY
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_attribution = ATTRIBUTION
         self._attr_entity_picture = self._get_entity_picture(station)

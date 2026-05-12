@@ -7,7 +7,7 @@ DOMAIN_DATA = f"{DOMAIN}_data"
 ATTRIBUTION = "Data provided by https://precoscombustiveis.dgeg.gov.pt/"
 
 DEFAULT_ICON = "mdi:gas-station"
-UNIT_OF_MEASUREMENT = "€"
+UNIT_OF_MEASUREMENT = "€/L"
 
 CONF_STATIONID = "stationId"
 CONF_FUEL_TYPES = "fuel_types"
