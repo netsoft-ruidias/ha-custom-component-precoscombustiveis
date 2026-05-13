@@ -355,8 +355,8 @@ class PrecosCombustiveisOptionsFlow(config_entries.OptionsFlow):
                     ): cv.multi_select(available_fuel_types)
                 }),
                 description_placeholders={
-                    "station_name": self.config_entry.data[CONF_STATION_NAME],
-                    "brand": self.config_entry.data[CONF_STATION_BRAND],
+                    "station_name": self.config_entry.data.get(CONF_STATION_NAME, station_id),
+                    "brand": self.config_entry.data.get(CONF_STATION_BRAND, ""),
                     "fuels_count": str(len(available_fuel_types)),
                 },
             )
@@ -372,6 +372,7 @@ class PrecosCombustiveisOptionsFlow(config_entries.OptionsFlow):
             station = await api.get_station(int(station_id))
             available_fuel_types = [fuel["TipoCombustivel"] for fuel in station.fuels]
             
+            station_id_err = self.config_entry.data[CONF_STATIONID]
             return self.async_show_form(
                 step_id="fuel_types",
                 data_schema=vol.Schema({
@@ -380,6 +381,11 @@ class PrecosCombustiveisOptionsFlow(config_entries.OptionsFlow):
                         default=current_fuel_types
                     ): cv.multi_select(available_fuel_types)
                 }),
+                description_placeholders={
+                    "station_name": self.config_entry.data.get(CONF_STATION_NAME, station_id_err),
+                    "brand": self.config_entry.data.get(CONF_STATION_BRAND, ""),
+                    "fuels_count": str(len(available_fuel_types)),
+                },
                 errors={"base": "no_fuel_selected"},
             )
 

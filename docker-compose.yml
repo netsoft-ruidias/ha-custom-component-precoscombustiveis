@@ -5,7 +5,7 @@ services:
       context: .
       args:
         HA_VERSION: stable
-    container_name: homeassistant-dev
+    container_name: homeassistant-precoscombustiveis
     restart: unless-stopped
     environment:
       TZ: Etc/UTC
