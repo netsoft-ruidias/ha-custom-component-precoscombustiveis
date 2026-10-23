@@ -104,8 +104,7 @@ class DGEG:
                 API_STATIONS_LIST.format(distrito_id),
                 headers={
                     "Content-Type": "application/json" 
-                },
-                ssl=False  # Disable SSL verification
+                }
             ) as res:
                 if res.status == 200:
                     json = await res.json()
@@ -137,8 +136,7 @@ class DGEG:
                 API_URI_TEMPLATE.format(station_id),
                 headers={ 
                     "Content-Type": "application/json" 
-                },
-                ssl=False  # Disable SSL verification
+                }
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
