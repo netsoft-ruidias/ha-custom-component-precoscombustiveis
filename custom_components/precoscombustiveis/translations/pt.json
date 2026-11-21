@@ -3,10 +3,25 @@
     "config": {
         "step": {
             "user": {
+                "title": "O que pretende adicionar?",
+                "description": "Escolha o tipo de informação que pretende adicionar.",
+                "menu_options": {
+                    "distrito": "Posto de Combustível",
+                    "forecast": "Previsão da evolução semanal de preços"
+                }
+            },
+            "distrito": {
                 "title": "Distrito",
                 "description": "Indique o distrito onde se encontra o posto de abastecimento.",
                 "data": {
                     "distrito_select": "Distrito"
+                }
+            },
+            "forecast": {
+                "title": "Previsão semanal de preços",
+                "description": "Escolha os combustíveis para os quais pretende a previsão da variação de preço para a próxima semana. Os combustíveis desmarcados deixam de ter sensor.",
+                "data": {
+                    "forecast_fuels": "Combustíveis"
                 }
             },
             "municipio": {
@@ -46,7 +61,8 @@
             "cannot_connect": "Falha na ligação",
             "invalid_station": "ID do posto inválido",
             "unknown": "Erro inesperado",
-            "no_fuel_selected": "Tem de selecionar pelo menos um tipo de combustivel."
+            "no_fuel_selected": "Tem de selecionar pelo menos um tipo de combustivel.",
+            "no_forecast_selected": "Tem de selecionar pelo menos um combustível."
         },
         "abort": {
             "no_stations": "Nenhum posto encontrado. Por favor tente mais tarde.",
@@ -54,6 +70,7 @@
             "station_not_found": "Posto selecionado não encontrado",
             "no_fuels": "Nenhum tipo de combustível encontrado para este posto.",
             "already_configured": "Este posto já está configurado",
+            "forecast_updated": "Previsão semanal atualizada com sucesso",
             "options_updated": "Tipos de combustivel atualizados com sucesso"
         }
     },
@@ -64,6 +81,13 @@
                 "description": "Selecione quais os tipos de combustivel que pretende monitorizar para {station_name} ({brand}). {fuels_count} tipos disponiveis.",
                 "data": {
                     "fuel_types_select": "Tipos de Combustivel"
+                }
+            },
+            "forecast": {
+                "title": "Previsão semanal de preços",
+                "description": "Escolha os combustíveis para os quais pretende a previsão da variação de preço para a próxima semana. Os combustíveis desmarcados deixam de ter sensor.",
+                "data": {
+                    "forecast_fuels": "Combustíveis"
                 }
             }
         },

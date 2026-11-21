@@ -16,6 +16,19 @@ CONF_STATION_NAME = "station_name"
 CONF_STATION_BRAND = "station_brand"
 CONF_STATION_ADDRESS = "station_address"
 
+CONF_ENTRY_TYPE = "entry_type"
+ENTRY_TYPE_STATION = "station"
+ENTRY_TYPE_FORECAST = "forecast"
+
+CONF_FORECAST_FUELS = "forecast_fuels"
+FORECAST_UNIQUE_ID = f"{DOMAIN}_forecast"
+FORECAST_FUELS = {
+    "gasolina": "Gasolina 95",
+    "gasoleo": "Gasóleo",
+}
+FORECAST_ATTRIBUTION = "Data provided by https://precocombustiveis.pt/"
+FORECAST_URL = "https://precocombustiveis.pt/proxima-semana/"
+
 # API endpoints
 API_ENDPOINT = "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb"
 API_STATIONS_LIST = f"{API_ENDPOINT}/PesquisarPostos?idDistrito={{}}&qtdPorPagina=99999&pagina=1"
