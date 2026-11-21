@@ -1,5 +1,5 @@
 ![GitHub](https://img.shields.io/github/license/netsoft-ruidias/ha-custom-component-precoscombustiveis?style=for-the-badge)
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![marketplace_badge](https://img.shields.io/badge/Home%20Assistant-Marketplace-41BDF5.svg?style=for-the-badge)](https://www.home-assistant.io/integrations/marketplace/)
 
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/netsoft-ruidias/ha-custom-component-precoscombustiveis?style=for-the-badge)
 ![GitHub Release Date](https://img.shields.io/github/release-date/netsoft-ruidias/ha-custom-component-precoscombustiveis?style=for-the-badge)
@@ -13,15 +13,21 @@ The data source for this integration is the [DGEG - Direcção-Geral de Energia 
 The author of this project categorically rejects any and all responsibility for the fuels prices that were presented by the integration.
 
 # Installation
-## HACS (Recommended)
-This is an official HACS integration and can be added via HACS.
+## Marketplace (Recommended)
+This integration can be installed from the Home Assistant [Marketplace](https://www.home-assistant.io/integrations/marketplace/), which comes with Home Assistant and replaces HACS. If you were using HACS, the Marketplace migrates your installation automatically and it keeps receiving updates.
 
-Assuming you have already installed and configured HACS, follow these steps:
+1. Navigate to `Settings > Marketplace` (administrators only). The first time, accept the warning about community content.
+2. Search for `DGEG - Preços dos Combustíveis`
+3. Open the repository page and click `Install`, then confirm the version
+4. When the installation finishes, the integration setup opens (if Home Assistant asks for a restart, restart it). Now continue with the configuration.
 
-1. Navigate to the HACS integrations page at http://<your-home-assistant>:8123/hacs/integrations.
-2. Search for `DGEG - Preços dos Combustíveis` under `Integrations` in the HACS Store tab.
-3. Click `Download this Repository with HACS`
-4. Your done! Now continue with the configuration.
+If you can't find it in the catalog, you can add it as a custom repository (this requires [connecting GitHub](https://www.home-assistant.io/integrations/marketplace/#connecting-github)):
+
+1. In `Settings > Marketplace`, click `Add from link`
+2. Enter `netsoft-ruidias/ha-custom-component-precoscombustiveis` and click `Add`
+3. Open the repository page and click `Install`
+
+To update, go to `Settings > Updates`. After updating, restart Home Assistant to apply the update.
 
 ## Manual
 Manual installation is not recomended
@@ -31,9 +37,46 @@ Manual installation is not recomended
 ## Through the interface
 1. Navigate to `Settings > Devices & Services` and then click `Add Integration`
 2. Search for `Precos Combustiveis`
-3. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired gas station and copy it's `Id`)
-4. Enter the StationId you copied in the previous step
-5. Repeat the procedure as many times as desired to include other stations
+3. Choose what you want to add: a `Posto de Combustível` (gas station) or the `Previsão da evolução semanal de preços` (weekly price variation forecast)
+
+### Gas station
+1. (Go to [dgeg](https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/ListarDadosPostos), search for the desired gas station and copy it's `Id`)
+2. Enter the StationId you copied in the previous step
+3. Repeat the procedure as many times as desired to include other stations
+
+### Weekly price variation forecast
+Select `Previsão da evolução semanal de preços` and choose which fuels you want (`Gasolina 95` and/or `Gasóleo`). One sensor is created per selected fuel.
+
+To add or remove fuels later, open the `Previsão semanal` integration entry and click `Configure` (the currently active fuels come pre-selected). Unchecking a fuel deletes its sensor.
+
+The data source for the forecast is [precocombustiveis.pt](https://precocombustiveis.pt/proxima-semana/), which is updated weekly.
+
+Each sensor, e.g. `Previsão semanal Gasóleo`, has:
+
+| | |
+|---|---|
+| **State** | Forecast price variation for next week, in `€/L`. Positive = rise, negative = fall (e.g. `-0.045` = falls 4.5 cents per liter). Being numeric, its history is kept by Home Assistant. |
+| **Icon** | `mdi:trending-up`, `mdi:trending-down` or `mdi:trending-neutral`, according to the trend |
+
+| Attribute | Description |
+|---|---|
+| `ForecastStart` | First day (Monday) of the forecast week, `YYYY-MM-DD` |
+| `ForecastEnd` | Last day (Sunday) of the forecast week, `YYYY-MM-DD` |
+| `LastUpdate` | Date of the last update of the source page, `YYYY-MM-DD` |
+| `Trend` | `sobe` (rise), `desce` (fall) or `neutro` |
+| `VariationLevel` | `nula` (no change), `ligeira` (below 2 cents), `moderada` (2 up to 6 cents) or `forte` (6 cents or more) |
+| `FormattedVariation` | Variation ready to display, e.g. `+ 6 cent€/Lt`, `- 4,5 cent€/Lt` |
+
+```yaml
+type: entities
+entities:
+  - entity: sensor.previsao_semanal_gasoleo
+    name: Gasóleo
+  - type: attribute
+    entity: sensor.previsao_semanal_gasoleo
+    attribute: FormattedVariation
+    name: Variação prevista
+```
 
 ## Through configuration.yaml
 Manual configuration through _configuration.yaml_ is not recomended, please use the interface configuration as described above

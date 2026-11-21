@@ -1,7 +1,7 @@
 {
   "domain": "precoscombustiveis",
   "name": "Preços dos Combustíveis - DGEG",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "requirements": [],
   "codeowners": ["@netsoft-ruidias"],
   "config_flow": true,

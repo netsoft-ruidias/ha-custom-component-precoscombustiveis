@@ -11,12 +11,18 @@ from homeassistant.helpers import config_validation as cv
 
 from .const import (
     DOMAIN,
+    CONF_ENTRY_TYPE,
+    CONF_FORECAST_FUELS,
     CONF_STATIONID,
     CONF_STATION_NAME,
     CONF_STATION_BRAND,
     CONF_STATION_ADDRESS,
     CONF_FUEL_TYPES,
-    DISTRITOS
+    DISTRITOS,
+    ENTRY_TYPE_FORECAST,
+    ENTRY_TYPE_STATION,
+    FORECAST_FUELS,
+    FORECAST_UNIQUE_ID,
 )
 from .dgeg import DGEG
 
@@ -72,7 +78,61 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> Any:
-        """Handle the initial step - select distrito."""
+        """Handle the initial step - choose what to add."""
+        return self.async_show_menu(
+            step_id="user",
+            menu_options=["distrito", "forecast"],
+        )
+
+    async def async_step_forecast(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> Any:
+        """Handle the weekly price forecast selection."""
+        existing = self.hass.config_entries.async_entry_for_domain_unique_id(
+            DOMAIN, FORECAST_UNIQUE_ID
+        )
+        current = list(existing.data.get(CONF_FORECAST_FUELS, [])) if existing else []
+        errors: Dict[str, str] = {}
+
+        if user_input is not None:
+            selected = user_input.get(CONF_FORECAST_FUELS, [])
+
+            if existing:
+                # Already configured: this works as an edit of the existing entry
+                self.hass.config_entries.async_update_entry(
+                    existing,
+                    data={**existing.data, CONF_FORECAST_FUELS: selected},
+                )
+                await self.hass.config_entries.async_reload(existing.entry_id)
+                return self.async_abort(reason="forecast_updated")
+
+            if selected:
+                await self.async_set_unique_id(FORECAST_UNIQUE_ID)
+                self._abort_if_unique_id_configured()
+                return self.async_create_entry(
+                    title="Previsão semanal de preços",
+                    data={
+                        CONF_ENTRY_TYPE: ENTRY_TYPE_FORECAST,
+                        CONF_FORECAST_FUELS: selected,
+                    },
+                )
+
+            errors["base"] = "no_forecast_selected"
+
+        return self.async_show_form(
+            step_id="forecast",
+            data_schema=vol.Schema({
+                vol.Optional(
+                    CONF_FORECAST_FUELS, default=current
+                ): cv.multi_select(FORECAST_FUELS)
+            }),
+            errors=errors,
+        )
+
+    async def async_step_distrito(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> Any:
+        """Handle the first station step - select distrito."""
         if user_input is None:
             # Create distrito selection list
             distritos_list = {
@@ -80,7 +140,7 @@ class PrecosCombustiveisConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }
 
             return self.async_show_form(
-                step_id="user",
+                step_id="distrito",
                 data_schema=vol.Schema({
                     vol.Required("distrito_select"): vol.In(distritos_list)
                 })
@@ -325,8 +385,36 @@ class PrecosCombustiveisOptionsFlow(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input: Optional[Dict[str, Any]] = None) -> Any:
         """Handle options flow initial step."""
+        # Entries created before the forecast existed have no entry type: they are stations
+        if self.config_entry.data.get(CONF_ENTRY_TYPE, ENTRY_TYPE_STATION) == ENTRY_TYPE_FORECAST:
+            return await self.async_step_forecast(user_input)
+
         # Redirect to fuel_types step
         return await self.async_step_fuel_types(user_input)
+
+    async def async_step_forecast(self, user_input: Optional[Dict[str, Any]] = None) -> Any:
+        """Handle forecast fuel selection."""
+        if user_input is None:
+            return self.async_show_form(
+                step_id="forecast",
+                data_schema=vol.Schema({
+                    vol.Optional(
+                        CONF_FORECAST_FUELS,
+                        default=self.config_entry.data.get(CONF_FORECAST_FUELS, []),
+                    ): cv.multi_select(FORECAST_FUELS)
+                }),
+            )
+
+        self.hass.config_entries.async_update_entry(
+            self.config_entry,
+            data={
+                **self.config_entry.data,
+                CONF_FORECAST_FUELS: user_input.get(CONF_FORECAST_FUELS, []),
+            },
+        )
+        await self.hass.config_entries.async_reload(self.config_entry.entry_id)
+
+        return self.async_abort(reason="options_updated")
 
     async def async_step_fuel_types(self, user_input: Optional[Dict[str, Any]] = None) -> Any:
         """Handle fuel types selection."""

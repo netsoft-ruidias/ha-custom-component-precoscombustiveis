@@ -3,10 +3,25 @@
     "config": {
         "step": {
             "user": {
+                "title": "What do you want to add?",
+                "description": "Choose the kind of information you want to add.",
+                "menu_options": {
+                    "distrito": "Gas Station",
+                    "forecast": "Weekly price variation forecast"
+                }
+            },
+            "distrito": {
                 "title": "Select Your Location",
                 "description": "Select the primary location for your gas station.",
                 "data": {
                     "distrito_select": "Location"
+                }
+            },
+            "forecast": {
+                "title": "Weekly price forecast",
+                "description": "Choose the fuels for which you want the price variation forecast for next week. Unchecked fuels will no longer have a sensor.",
+                "data": {
+                    "forecast_fuels": "Fuels"
                 }
             },
             "municipio": {
@@ -46,14 +61,16 @@
             "cannot_connect": "Failed to connect",
             "invalid_station": "Invalid station ID",
             "unknown": "Unexpected error",
-            "no_fuel_selected": "You must select at least one fuel type."
+            "no_fuel_selected": "You must select at least one fuel type.",
+            "no_forecast_selected": "You must select at least one fuel."
         },
         "abort": {
             "no_stations": "No stations found. Please try again later.",
             "no_brands": "No brands found for the selected municipality.",
             "station_not_found": "Selected station not found",
             "no_fuels": "No fuel types found for this station.",
-            "already_configured": "This station is already configured"
+            "already_configured": "This station is already configured",
+            "forecast_updated": "Weekly forecast updated successfully"
         }
     },
     "options": {
@@ -63,6 +80,13 @@
                 "description": "Select which fuel types you want to monitor for {station_name} ({brand}). {fuels_count} types available.",
                 "data": {
                     "fuel_types_select": "Fuel Types"
+                }
+            },
+            "forecast": {
+                "title": "Weekly price forecast",
+                "description": "Choose the fuels for which you want the price variation forecast for next week. Unchecked fuels will no longer have a sensor.",
+                "data": {
+                    "forecast_fuels": "Fuels"
                 }
             }
         },
